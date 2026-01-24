@@ -80,6 +80,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const setUserFromCheckout = useCallback(async (sessionId: string) => {
+    // Handle mock sessions for testing
+    if (sessionId.startsWith('mock_session_')) {
+      const mockUserData: User = {
+        email: 'demo@nhs.uk',
+        tenant: 'torbay',
+        plan: 'pro',
+        subscriptionStatus: 'active',
+      };
+      const mockToken = 'mock_token_' + Date.now();
+      
+      setToken(mockToken);
+      setUser(mockUserData);
+      localStorage.setItem('auth_token', mockToken);
+      localStorage.setItem('auth_user', JSON.stringify(mockUserData));
+      return;
+    }
+
     const response = await fetch(`${API_BASE}/stripe/portal`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -107,7 +124,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(userData);
     localStorage.setItem('auth_user', JSON.stringify(userData));
   }, []);
-
   return (
     <AuthContext.Provider value={{
       user,

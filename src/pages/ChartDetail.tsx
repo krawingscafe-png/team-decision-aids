@@ -6,13 +6,52 @@ import { Spinner } from '@/components/Spinner';
 import { useAuth } from '@/contexts/AuthContext';
 
 const API_BASE = import.meta.env.VITE_API_BASE || 'https://api.torbaycharts.com';
+const MOCK_MODE = true; // Toggle for testing
 
 interface ChartData {
   slug: string;
   title: string;
   description: string;
-  flowData?: any; // React Flow data structure
+  nodes: Array<{ id: string; type?: string; data: { label: string }; position: { x: number; y: number } }>;
+  edges: Array<{ id: string; source: string; target: string; label?: string }>;
 }
+
+const MOCK_CHART_DATA: Record<string, ChartData> = {
+  'anticoagulation-af': {
+    slug: 'anticoagulation-af',
+    title: 'Anticoagulation in Atrial Fibrillation',
+    description: 'Decision aid for choosing anticoagulation therapy in patients with AF.',
+    nodes: [
+      { id: '1', type: 'input', data: { label: 'Patient with AF' }, position: { x: 250, y: 0 } },
+      { id: '2', data: { label: 'Calculate CHA₂DS₂-VASc Score' }, position: { x: 250, y: 100 } },
+      { id: '3', data: { label: 'Score ≥ 2?' }, position: { x: 250, y: 200 } },
+      { id: '4', data: { label: 'Consider anticoagulation' }, position: { x: 100, y: 300 } },
+      { id: '5', data: { label: 'Assess bleeding risk (HAS-BLED)' }, position: { x: 400, y: 300 } },
+    ],
+    edges: [
+      { id: 'e1-2', source: '1', target: '2' },
+      { id: 'e2-3', source: '2', target: '3' },
+      { id: 'e3-4', source: '3', target: '4', label: 'Yes' },
+      { id: 'e3-5', source: '3', target: '5', label: 'No' },
+    ],
+  },
+  'chest-pain-assessment': {
+    slug: 'chest-pain-assessment',
+    title: 'Chest Pain Assessment',
+    description: 'Flowchart for evaluating and triaging patients presenting with chest pain.',
+    nodes: [
+      { id: '1', type: 'input', data: { label: 'Patient with Chest Pain' }, position: { x: 250, y: 0 } },
+      { id: '2', data: { label: 'STEMI on ECG?' }, position: { x: 250, y: 100 } },
+      { id: '3', data: { label: 'Activate Cath Lab' }, position: { x: 100, y: 200 } },
+      { id: '4', data: { label: 'Troponin Testing' }, position: { x: 400, y: 200 } },
+    ],
+    edges: [
+      { id: 'e1-2', source: '1', target: '2' },
+      { id: 'e2-3', source: '2', target: '3', label: 'Yes' },
+      { id: 'e2-4', source: '2', target: '4', label: 'No' },
+    ],
+  },
+};
 
 export default function ChartDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -24,7 +63,35 @@ export default function ChartDetail() {
 
   useEffect(() => {
     async function fetchChart() {
+      if (!slug) return;
+
       try {
+        if (MOCK_MODE) {
+          await new Promise(resolve => setTimeout(resolve, 300));
+          const mockChart = MOCK_CHART_DATA[slug];
+          if (mockChart) {
+            setChart(mockChart);
+          } else {
+            // Generic mock for charts not in our mock data
+            setChart({
+              slug,
+              title: slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+              description: 'Decision support flowchart for clinical decision-making.',
+              nodes: [
+                { id: '1', type: 'input', data: { label: 'Start' }, position: { x: 250, y: 0 } },
+                { id: '2', data: { label: 'Assess Patient' }, position: { x: 250, y: 100 } },
+                { id: '3', data: { label: 'Make Decision' }, position: { x: 250, y: 200 } },
+              ],
+              edges: [
+                { id: 'e1-2', source: '1', target: '2' },
+                { id: 'e2-3', source: '2', target: '3' },
+              ],
+            });
+          }
+          setIsLoading(false);
+          return;
+        }
+
         const response = await fetch(`${API_BASE}/charts/${slug}`, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -63,9 +130,7 @@ export default function ChartDetail() {
       }
     }
 
-    if (slug) {
-      fetchChart();
-    }
+    fetchChart();
   }, [slug, token]);
 
   const handlePrint = useCallback(async () => {
