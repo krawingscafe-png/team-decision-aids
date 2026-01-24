@@ -6,6 +6,34 @@ import { SkeletonCard } from '@/components/SkeletonCard';
 import { useAuth } from '@/contexts/AuthContext';
 
 const API_BASE = import.meta.env.VITE_API_BASE || 'https://api.torbaycharts.com';
+const MOCK_MODE = true; // Toggle for testing
+
+const MOCK_CHARTS: Chart[] = [
+  {
+    slug: 'anticoagulation-af',
+    title: 'Anticoagulation in Atrial Fibrillation',
+    description: 'Decision aid for choosing anticoagulation therapy in patients with AF.',
+    image: undefined,
+  },
+  {
+    slug: 'chest-pain-assessment',
+    title: 'Chest Pain Assessment',
+    description: 'Flowchart for evaluating and triaging patients presenting with chest pain.',
+    image: undefined,
+  },
+  {
+    slug: 'diabetes-management',
+    title: 'Type 2 Diabetes Management',
+    description: 'Step-by-step decision support for glucose-lowering therapy selection.',
+    image: undefined,
+  },
+  {
+    slug: 'copd-exacerbation',
+    title: 'COPD Exacerbation Management',
+    description: 'Treatment pathway for acute exacerbations of chronic obstructive pulmonary disease.',
+    image: undefined,
+  },
+];
 
 interface Chart {
   slug: string;
@@ -23,6 +51,13 @@ export default function Charts() {
   useEffect(() => {
     async function fetchCharts() {
       try {
+        if (MOCK_MODE) {
+          // Simulate API delay
+          await new Promise(resolve => setTimeout(resolve, 500));
+          setCharts(MOCK_CHARTS);
+          return;
+        }
+
         const response = await fetch(`${API_BASE}/charts`, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -47,7 +82,6 @@ export default function Charts() {
 
     fetchCharts();
   }, [token]);
-
   if (isLoading) {
     return (
       <div className="py-12">

@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 
 const API_BASE = import.meta.env.VITE_API_BASE || 'https://api.torbaycharts.com';
+const MOCK_MODE = true; // Toggle for testing without real Stripe
 
 interface CheckoutOptions {
   customerEmail?: string;
@@ -15,6 +16,15 @@ export function useStripeCheckout() {
     setError(null);
 
     try {
+      if (MOCK_MODE) {
+        // Simulate checkout redirect with mock session
+        await new Promise(resolve => setTimeout(resolve, 500));
+        const mockSessionId = `mock_session_${Date.now()}`;
+        const planName = priceId.replace('price_', '');
+        window.location.href = `/login?success=true&session_id=${mockSessionId}&plan=${planName}`;
+        return;
+      }
+
       const successUrl = `${window.location.origin}/login?success=true&session_id={CHECKOUT_SESSION_ID}`;
       const cancelUrl = `${window.location.origin}/pricing?canceled=true`;
 
