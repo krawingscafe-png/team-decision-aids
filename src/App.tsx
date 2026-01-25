@@ -19,6 +19,7 @@ import Charts from "./pages/Charts";
 import ChartDetail from "./pages/ChartDetail";
 import Profile from "./pages/Profile";
 import Billing from "./pages/Billing";
+import Checkout from "./pages/Checkout";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -83,6 +84,7 @@ const App = () => {
                       </Protected>
                     }
                   />
+                  <Route path="/checkout" element={<Checkout />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </main>
