@@ -17,11 +17,10 @@ export function useStripeCheckout() {
 
     try {
       if (MOCK_MODE) {
-        // Simulate checkout redirect with mock session
-        await new Promise(resolve => setTimeout(resolve, 500));
-        const mockSessionId = `mock_session_${Date.now()}`;
+        // Redirect to checkout page with plan info
+        await new Promise(resolve => setTimeout(resolve, 300));
         const planName = priceId.replace('price_', '');
-        window.location.href = `/login?success=true&session_id=${mockSessionId}&plan=${planName}`;
+        window.location.href = `/checkout?plan=${planName}`;
         return;
       }
 
