@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, BarChart3 } from 'lucide-react';
+import { Menu, X, BarChart3, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
+import { MOCK_TENANTS } from '@/lib/tenants';
 
 interface NavbarProps {
   tenantLogo?: string;
@@ -32,7 +33,11 @@ export function Navbar({ tenantLogo }: NavbarProps) {
             ) : (
               <>
                 <BarChart3 className="h-8 w-8 text-primary" />
-                <span className="text-lg font-semibold text-foreground">Torbay Charts</span>
+                <span className="text-lg font-semibold text-foreground">
+                  {user?.tenant && MOCK_TENANTS[user.tenant] 
+                    ? MOCK_TENANTS[user.tenant].name.replace(' NHS Trust', '') 
+                    : 'Torbay'} Charts
+                </span>
               </>
             )}
           </Link>
@@ -64,7 +69,12 @@ export function Navbar({ tenantLogo }: NavbarProps) {
                   </Link>
                 )}
                 <div className="flex items-center gap-3">
-                  <span className="text-sm text-muted-foreground">{user.email}</span>
+                  <Link to="/profile">
+                    <Button variant="ghost" size="sm" className="gap-1">
+                      <User className="h-4 w-4" />
+                      <span className="hidden lg:inline">{user.email}</span>
+                    </Button>
+                  </Link>
                   <Button variant="outline" size="sm" onClick={logout}>
                     Logout
                   </Button>
@@ -115,6 +125,9 @@ export function Navbar({ tenantLogo }: NavbarProps) {
                   </Link>
                 )}
                 <div className="pt-3 border-t">
+                  <Link to="/profile" className="block py-2 text-sm font-medium text-muted-foreground" onClick={() => setIsOpen(false)}>
+                    My Profile
+                  </Link>
                   <p className="text-sm text-muted-foreground mb-2">{user.email}</p>
                   <Button variant="outline" size="sm" onClick={logout}>
                     Logout

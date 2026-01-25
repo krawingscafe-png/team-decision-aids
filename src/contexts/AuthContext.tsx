@@ -1,4 +1,8 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import { MOCK_USERS, MOCK_TENANTS, applyTenantTheme, resetTheme } from '@/lib/tenants';
+
+// Enable mock mode for testing without backend
+const MOCK_MODE = true;
 
 interface User {
   email: string;
@@ -28,7 +32,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const isSubscribed = user?.subscriptionStatus === 'active' || user?.subscriptionStatus === 'trialing';
 
-  // Initialize from localStorage on mount
+  // Initialize from localStorage on mount and apply theme
   useEffect(() => {
     const storedToken = localStorage.getItem('auth_token');
     const storedUser = localStorage.getItem('auth_user');
@@ -36,7 +40,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (storedToken && storedUser) {
       try {
         setToken(storedToken);
-        setUser(JSON.parse(storedUser));
+        const parsedUser = JSON.parse(storedUser);
+        setUser(parsedUser);
+        
+        // Apply tenant theme if user is logged in
+        if (parsedUser.tenant && MOCK_TENANTS[parsedUser.tenant]) {
+          applyTenantTheme(MOCK_TENANTS[parsedUser.tenant]);
+        }
       } catch (e) {
         localStorage.removeItem('auth_token');
         localStorage.removeItem('auth_user');
@@ -46,6 +56,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = useCallback(async (email: string, password: string) => {
+    // Mock mode: check against mock users
+    if (MOCK_MODE) {
+      await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
+      
+      const mockUser = MOCK_USERS.find(u => u.email === email && u.password === password);
+      
+      if (!mockUser) {
+        throw new Error('Invalid email or password');
+      }
+      
+      const userData: User = {
+        email: mockUser.email,
+        tenant: mockUser.tenant,
+        plan: mockUser.plan,
+        subscriptionStatus: mockUser.subscriptionStatus,
+      };
+      
+      const mockToken = 'mock_token_' + Date.now();
+      
+      setToken(mockToken);
+      setUser(userData);
+      localStorage.setItem('auth_token', mockToken);
+      localStorage.setItem('auth_user', JSON.stringify(userData));
+      
+      // Apply tenant theme
+      if (MOCK_TENANTS[mockUser.tenant]) {
+        applyTenantTheme(MOCK_TENANTS[mockUser.tenant]);
+      }
+      
+      return;
+    }
+    
     const response = await fetch(`${API_BASE}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -77,6 +119,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
     localStorage.removeItem('auth_token');
     localStorage.removeItem('auth_user');
+    resetTheme(); // Reset to default theme on logout
   }, []);
 
   const setUserFromCheckout = useCallback(async (sessionId: string) => {

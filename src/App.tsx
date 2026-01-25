@@ -17,6 +17,8 @@ import Pricing from "./pages/Pricing";
 import Login from "./pages/Login";
 import Charts from "./pages/Charts";
 import ChartDetail from "./pages/ChartDetail";
+import Profile from "./pages/Profile";
+import Billing from "./pages/Billing";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -62,6 +64,22 @@ const App = () => {
                     element={
                       <Protected>
                         <ChartDetail />
+                      </Protected>
+                    }
+                  />
+                  <Route
+                    path="/profile"
+                    element={
+                      <Protected>
+                        <Profile />
+                      </Protected>
+                    }
+                  />
+                  <Route
+                    path="/billing"
+                    element={
+                      <Protected>
+                        <Billing />
                       </Protected>
                     }
                   />
