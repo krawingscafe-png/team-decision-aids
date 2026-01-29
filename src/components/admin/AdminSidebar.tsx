@@ -14,6 +14,8 @@ import { Button } from '@/components/ui/button';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
+import { AdminNotifications } from '@/components/admin/AdminNotifications';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 const navItems = [
   { path: '/admin', label: 'Dashboard', icon: LayoutDashboard },
@@ -43,10 +45,18 @@ export function AdminSidebar() {
       )}
     >
       {/* Header */}
-      <div className="flex items-center gap-2 p-4 border-b">
-        <Shield className="h-6 w-6 text-primary flex-shrink-0" />
+      <div className="flex items-center justify-between p-4 border-b">
+        <div className="flex items-center gap-2">
+          <Shield className="h-6 w-6 text-primary flex-shrink-0" />
+          {!collapsed && (
+            <span className="font-semibold text-foreground">Admin Panel</span>
+          )}
+        </div>
         {!collapsed && (
-          <span className="font-semibold text-foreground">Admin Panel</span>
+          <div className="flex items-center gap-1">
+            <AdminNotifications />
+            <ThemeToggle />
+          </div>
         )}
       </div>
 
@@ -71,6 +81,12 @@ export function AdminSidebar() {
 
       {/* Footer */}
       <div className="p-3 border-t space-y-2">
+        {collapsed && (
+          <div className="flex flex-col items-center gap-2 pb-2">
+            <AdminNotifications />
+            <ThemeToggle />
+          </div>
+        )}
         <Button
           variant="ghost"
           size="sm"

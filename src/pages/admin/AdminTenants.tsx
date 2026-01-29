@@ -1,11 +1,21 @@
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { MOCK_ADMIN_TENANTS } from '@/lib/admin';
-import { Edit, Plus, Users, CreditCard, TrendingUp } from 'lucide-react';
+import { MOCK_ADMIN_TENANTS, AdminTenant } from '@/lib/admin';
+import { Plus, Users, CreditCard, TrendingUp } from 'lucide-react';
+import { TenantBrandingEditor } from '@/components/admin/TenantBrandingEditor';
 
 export default function AdminTenants() {
+  const [tenants, setTenants] = useState(MOCK_ADMIN_TENANTS);
+
+  const handleSaveTenant = (updatedTenant: AdminTenant) => {
+    setTenants(prev => 
+      prev.map(t => t.id === updatedTenant.id ? updatedTenant : t)
+    );
+  };
+
   return (
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-start">
@@ -21,7 +31,7 @@ export default function AdminTenants() {
 
       {/* Tenant Cards */}
       <div className="grid gap-6 md:grid-cols-2">
-        {MOCK_ADMIN_TENANTS.map((tenant) => (
+        {tenants.map((tenant) => (
           <Card key={tenant.id}>
             <CardHeader className="flex flex-row items-center justify-between">
               <div className="flex items-center gap-3">
@@ -34,9 +44,7 @@ export default function AdminTenants() {
                   <p className="text-sm text-muted-foreground">ID: {tenant.id}</p>
                 </div>
               </div>
-              <Button variant="ghost" size="sm">
-                <Edit className="h-4 w-4" />
-              </Button>
+              <TenantBrandingEditor tenant={tenant} onSave={handleSaveTenant} />
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-3 gap-4">
@@ -81,7 +89,7 @@ export default function AdminTenants() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {MOCK_ADMIN_TENANTS.map((tenant) => (
+                {tenants.map((tenant) => (
                   <TableRow key={tenant.id}>
                     <TableCell>
                       <div className="flex items-center gap-2">
@@ -104,9 +112,7 @@ export default function AdminTenants() {
                     <TableCell className="font-medium">£{tenant.monthlyRevenue}</TableCell>
                     <TableCell>{tenant.createdAt}</TableCell>
                     <TableCell>
-                      <Button variant="ghost" size="sm">
-                        <Edit className="h-4 w-4" />
-                      </Button>
+                      <TenantBrandingEditor tenant={tenant} onSave={handleSaveTenant} />
                     </TableCell>
                   </TableRow>
                 ))}

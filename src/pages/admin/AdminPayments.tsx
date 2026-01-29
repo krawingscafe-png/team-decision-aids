@@ -7,10 +7,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { MOCK_ADMIN_PAYMENTS, AdminPayment } from '@/lib/admin';
 import { Search, Download, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { usePagination } from '@/hooks/usePagination';
+import { DataTablePagination } from '@/components/admin/DataTablePagination';
+import { Skeleton } from '@/components/ui/skeleton';
+import { toast } from '@/hooks/use-toast';
 
 export default function AdminPayments() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [isLoading, setIsLoading] = useState(false);
 
   const filteredPayments = MOCK_ADMIN_PAYMENTS.filter((payment) => {
     const matchesSearch = 
@@ -20,9 +25,42 @@ export default function AdminPayments() {
     return matchesSearch && matchesStatus;
   });
 
+  const {
+    currentPage,
+    totalPages,
+    paginatedData,
+    goToPage,
+    setItemsPerPage,
+    itemsPerPage,
+    startIndex,
+    endIndex,
+  } = usePagination({ data: filteredPayments, itemsPerPage: 5 });
+
   const totalRevenue = MOCK_ADMIN_PAYMENTS
     .filter(p => p.status === 'succeeded')
     .reduce((sum, p) => sum + p.amount, 0);
+
+  const handleExport = () => {
+    const csv = [
+      ['Invoice', 'Email', 'Tenant', 'Plan', 'Amount', 'Status', 'Date'].join(','),
+      ...filteredPayments.map(p => 
+        [p.invoiceNumber, p.userEmail, p.tenant, p.plan, p.amount, p.status, p.date].join(',')
+      )
+    ].join('\n');
+    
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'payments-export.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    toast({
+      title: "Export complete",
+      description: `Exported ${filteredPayments.length} transactions to CSV`,
+    });
+  };
 
   const getStatusBadge = (status: AdminPayment['status']) => {
     switch (status) {
@@ -46,7 +84,7 @@ export default function AdminPayments() {
           <h1 className="text-3xl font-bold text-foreground">Payments</h1>
           <p className="text-muted-foreground">View all transactions and payment history</p>
         </div>
-        <Button>
+        <Button onClick={handleExport}>
           <Download className="h-4 w-4 mr-2" />
           Export CSV
         </Button>
@@ -131,26 +169,53 @@ export default function AdminPayments() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredPayments.map((payment) => (
-                  <TableRow key={payment.id}>
-                    <TableCell className="font-mono text-sm">{payment.invoiceNumber}</TableCell>
-                    <TableCell>{payment.userEmail}</TableCell>
-                    <TableCell className="capitalize">{payment.tenant}</TableCell>
-                    <TableCell>{payment.plan}</TableCell>
-                    <TableCell className="font-medium">
-                      {payment.amount > 0 ? `£${payment.amount}` : '—'}
+                {isLoading ? (
+                  Array.from({ length: 5 }).map((_, i) => (
+                    <TableRow key={i}>
+                      <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                      <TableCell><Skeleton className="h-4 w-40" /></TableCell>
+                      <TableCell><Skeleton className="h-4 w-20" /></TableCell>
+                      <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                      <TableCell><Skeleton className="h-4 w-16" /></TableCell>
+                      <TableCell><Skeleton className="h-5 w-20" /></TableCell>
+                      <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                    </TableRow>
+                  ))
+                ) : paginatedData.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                      No transactions found matching your criteria
                     </TableCell>
-                    <TableCell>{getStatusBadge(payment.status)}</TableCell>
-                    <TableCell>{payment.date}</TableCell>
                   </TableRow>
-                ))}
+                ) : (
+                  paginatedData.map((payment) => (
+                    <TableRow key={payment.id}>
+                      <TableCell className="font-mono text-sm">{payment.invoiceNumber}</TableCell>
+                      <TableCell>{payment.userEmail}</TableCell>
+                      <TableCell className="capitalize">{payment.tenant}</TableCell>
+                      <TableCell>{payment.plan}</TableCell>
+                      <TableCell className="font-medium">
+                        {payment.amount > 0 ? `£${payment.amount}` : '—'}
+                      </TableCell>
+                      <TableCell>{getStatusBadge(payment.status)}</TableCell>
+                      <TableCell>{payment.date}</TableCell>
+                    </TableRow>
+                  ))
+                )}
               </TableBody>
             </Table>
           </div>
 
-          <div className="mt-4 text-sm text-muted-foreground">
-            Showing {filteredPayments.length} of {MOCK_ADMIN_PAYMENTS.length} transactions
-          </div>
+          <DataTablePagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            startIndex={startIndex}
+            endIndex={endIndex}
+            totalItems={filteredPayments.length}
+            itemsPerPage={itemsPerPage}
+            onPageChange={goToPage}
+            onItemsPerPageChange={setItemsPerPage}
+          />
         </CardContent>
       </Card>
     </div>
