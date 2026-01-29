@@ -13,11 +13,15 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { usePagination } from '@/hooks/usePagination';
+import { DataTablePagination } from '@/components/admin/DataTablePagination';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function AdminUsers() {
   const [searchQuery, setSearchQuery] = useState('');
   const [tenantFilter, setTenantFilter] = useState<string>('all');
   const [planFilter, setPlanFilter] = useState<string>('all');
+  const [isLoading, setIsLoading] = useState(false);
 
   const filteredUsers = MOCK_ADMIN_USERS.filter((user) => {
     const matchesSearch = user.email.toLowerCase().includes(searchQuery.toLowerCase());
@@ -25,6 +29,17 @@ export default function AdminUsers() {
     const matchesPlan = planFilter === 'all' || user.plan === planFilter;
     return matchesSearch && matchesTenant && matchesPlan;
   });
+
+  const {
+    currentPage,
+    totalPages,
+    paginatedData,
+    goToPage,
+    setItemsPerPage,
+    itemsPerPage,
+    startIndex,
+    endIndex,
+  } = usePagination({ data: filteredUsers, itemsPerPage: 5 });
 
   const getStatusBadge = (status: AdminUser['subscriptionStatus']) => {
     switch (status) {
@@ -113,42 +128,69 @@ export default function AdminUsers() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredUsers.map((user) => (
-                  <TableRow key={user.id}>
-                    <TableCell className="font-medium">{user.email}</TableCell>
-                    <TableCell className="capitalize">{user.tenant}</TableCell>
-                    <TableCell>{getPlanBadge(user.plan)}</TableCell>
-                    <TableCell>{getStatusBadge(user.subscriptionStatus)}</TableCell>
-                    <TableCell>{user.chartsViewed}</TableCell>
-                    <TableCell>{user.lastLogin}</TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="bg-popover">
-                          <DropdownMenuItem>
-                            <Mail className="h-4 w-4 mr-2" />
-                            Send Email
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="text-destructive">
-                            <UserX className="h-4 w-4 mr-2" />
-                            Suspend User
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                {isLoading ? (
+                  Array.from({ length: 5 }).map((_, i) => (
+                    <TableRow key={i}>
+                      <TableCell><Skeleton className="h-4 w-40" /></TableCell>
+                      <TableCell><Skeleton className="h-4 w-20" /></TableCell>
+                      <TableCell><Skeleton className="h-5 w-16" /></TableCell>
+                      <TableCell><Skeleton className="h-5 w-16" /></TableCell>
+                      <TableCell><Skeleton className="h-4 w-12" /></TableCell>
+                      <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                      <TableCell><Skeleton className="h-8 w-8" /></TableCell>
+                    </TableRow>
+                  ))
+                ) : paginatedData.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                      No users found matching your criteria
                     </TableCell>
                   </TableRow>
-                ))}
+                ) : (
+                  paginatedData.map((user) => (
+                    <TableRow key={user.id}>
+                      <TableCell className="font-medium">{user.email}</TableCell>
+                      <TableCell className="capitalize">{user.tenant}</TableCell>
+                      <TableCell>{getPlanBadge(user.plan)}</TableCell>
+                      <TableCell>{getStatusBadge(user.subscriptionStatus)}</TableCell>
+                      <TableCell>{user.chartsViewed}</TableCell>
+                      <TableCell>{user.lastLogin}</TableCell>
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="sm">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="bg-popover">
+                            <DropdownMenuItem>
+                              <Mail className="h-4 w-4 mr-2" />
+                              Send Email
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="text-destructive">
+                              <UserX className="h-4 w-4 mr-2" />
+                              Suspend User
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
               </TableBody>
             </Table>
           </div>
 
-          <div className="mt-4 text-sm text-muted-foreground">
-            Showing {filteredUsers.length} of {MOCK_ADMIN_USERS.length} users
-          </div>
+          <DataTablePagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            startIndex={startIndex}
+            endIndex={endIndex}
+            totalItems={filteredUsers.length}
+            itemsPerPage={itemsPerPage}
+            onPageChange={goToPage}
+            onItemsPerPageChange={setItemsPerPage}
+          />
         </CardContent>
       </Card>
     </div>

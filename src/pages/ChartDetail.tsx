@@ -4,16 +4,31 @@ import { ArrowLeft, Printer, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/Spinner';
 import { useAuth } from '@/contexts/AuthContext';
+import { InteractiveFlowChart } from '@/components/charts/InteractiveFlowChart';
 
 const API_BASE = import.meta.env.VITE_API_BASE || 'https://api.torbaycharts.com';
 const MOCK_MODE = true; // Toggle for testing
+
+interface ChartNode {
+  id: string;
+  type?: string;
+  data: { label: string };
+  position: { x: number; y: number };
+}
+
+interface ChartEdge {
+  id: string;
+  source: string;
+  target: string;
+  label?: string;
+}
 
 interface ChartData {
   slug: string;
   title: string;
   description: string;
-  nodes: Array<{ id: string; type?: string; data: { label: string }; position: { x: number; y: number } }>;
-  edges: Array<{ id: string; source: string; target: string; label?: string }>;
+  nodes: ChartNode[];
+  edges: ChartEdge[];
 }
 
 const MOCK_CHART_DATA: Record<string, ChartData> = {
@@ -25,14 +40,16 @@ const MOCK_CHART_DATA: Record<string, ChartData> = {
       { id: '1', type: 'input', data: { label: 'Patient with AF' }, position: { x: 250, y: 0 } },
       { id: '2', data: { label: 'Calculate CHA₂DS₂-VASc Score' }, position: { x: 250, y: 100 } },
       { id: '3', data: { label: 'Score ≥ 2?' }, position: { x: 250, y: 200 } },
-      { id: '4', data: { label: 'Consider anticoagulation' }, position: { x: 100, y: 300 } },
-      { id: '5', data: { label: 'Assess bleeding risk (HAS-BLED)' }, position: { x: 400, y: 300 } },
+      { id: '4', type: 'output', data: { label: 'Consider anticoagulation' }, position: { x: 100, y: 320 } },
+      { id: '5', data: { label: 'Assess bleeding risk (HAS-BLED)' }, position: { x: 400, y: 320 } },
+      { id: '6', type: 'output', data: { label: 'Reassess annually' }, position: { x: 400, y: 440 } },
     ],
     edges: [
       { id: 'e1-2', source: '1', target: '2' },
       { id: 'e2-3', source: '2', target: '3' },
       { id: 'e3-4', source: '3', target: '4', label: 'Yes' },
       { id: 'e3-5', source: '3', target: '5', label: 'No' },
+      { id: 'e5-6', source: '5', target: '6' },
     ],
   },
   'chest-pain-assessment': {
@@ -42,16 +59,46 @@ const MOCK_CHART_DATA: Record<string, ChartData> = {
     nodes: [
       { id: '1', type: 'input', data: { label: 'Patient with Chest Pain' }, position: { x: 250, y: 0 } },
       { id: '2', data: { label: 'STEMI on ECG?' }, position: { x: 250, y: 100 } },
-      { id: '3', data: { label: 'Activate Cath Lab' }, position: { x: 100, y: 200 } },
-      { id: '4', data: { label: 'Troponin Testing' }, position: { x: 400, y: 200 } },
+      { id: '3', type: 'output', data: { label: 'Activate Cath Lab' }, position: { x: 80, y: 220 } },
+      { id: '4', data: { label: 'Troponin Testing' }, position: { x: 420, y: 220 } },
+      { id: '5', data: { label: 'Elevated?' }, position: { x: 420, y: 340 } },
+      { id: '6', type: 'output', data: { label: 'NSTEMI Protocol' }, position: { x: 280, y: 460 } },
+      { id: '7', type: 'output', data: { label: 'Consider other causes' }, position: { x: 560, y: 460 } },
     ],
     edges: [
       { id: 'e1-2', source: '1', target: '2' },
       { id: 'e2-3', source: '2', target: '3', label: 'Yes' },
       { id: 'e2-4', source: '2', target: '4', label: 'No' },
+      { id: 'e4-5', source: '4', target: '5' },
+      { id: 'e5-6', source: '5', target: '6', label: 'Yes' },
+      { id: 'e5-7', source: '5', target: '7', label: 'No' },
     ],
   },
 };
+
+// Generate generic chart for unknown slugs
+function generateGenericChart(slug: string): ChartData {
+  return {
+    slug,
+    title: slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+    description: 'Decision support flowchart for clinical decision-making.',
+    nodes: [
+      { id: '1', type: 'input', data: { label: 'Start Assessment' }, position: { x: 250, y: 0 } },
+      { id: '2', data: { label: 'Gather Patient History' }, position: { x: 250, y: 100 } },
+      { id: '3', data: { label: 'Clinical Examination' }, position: { x: 250, y: 200 } },
+      { id: '4', data: { label: 'Key Findings?' }, position: { x: 250, y: 300 } },
+      { id: '5', type: 'output', data: { label: 'Proceed with Treatment' }, position: { x: 100, y: 420 } },
+      { id: '6', type: 'output', data: { label: 'Further Investigation' }, position: { x: 400, y: 420 } },
+    ],
+    edges: [
+      { id: 'e1-2', source: '1', target: '2' },
+      { id: 'e2-3', source: '2', target: '3' },
+      { id: 'e3-4', source: '3', target: '4' },
+      { id: 'e4-5', source: '4', target: '5', label: 'Yes' },
+      { id: 'e4-6', source: '4', target: '6', label: 'No' },
+    ],
+  };
+}
 
 export default function ChartDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -72,21 +119,7 @@ export default function ChartDetail() {
           if (mockChart) {
             setChart(mockChart);
           } else {
-            // Generic mock for charts not in our mock data
-            setChart({
-              slug,
-              title: slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
-              description: 'Decision support flowchart for clinical decision-making.',
-              nodes: [
-                { id: '1', type: 'input', data: { label: 'Start' }, position: { x: 250, y: 0 } },
-                { id: '2', data: { label: 'Assess Patient' }, position: { x: 250, y: 100 } },
-                { id: '3', data: { label: 'Make Decision' }, position: { x: 250, y: 200 } },
-              ],
-              edges: [
-                { id: 'e1-2', source: '1', target: '2' },
-                { id: 'e2-3', source: '2', target: '3' },
-              ],
-            });
+            setChart(generateGenericChart(slug));
           }
           setIsLoading(false);
           return;
@@ -187,6 +220,11 @@ export default function ChartDetail() {
     }
   }, [slug, token]);
 
+  const handleNodeClick = useCallback((nodeId: string) => {
+    console.log('Node clicked:', nodeId);
+    // Could be used for navigation, showing details, etc.
+  }, []);
+
   if (isLoading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
@@ -255,17 +293,12 @@ export default function ChartDetail() {
           </div>
         </div>
 
-        {/* Chart Viewer Placeholder */}
-        <div className="bg-card border rounded-lg p-8 min-h-[500px] flex items-center justify-center">
-          <div className="text-center">
-            <p className="text-muted-foreground mb-2">
-              React Flow interactive chart will render here
-            </p>
-            <p className="text-sm text-muted-foreground">
-              Chart slug: {slug}
-            </p>
-          </div>
-        </div>
+        {/* Interactive Flow Chart */}
+        <InteractiveFlowChart 
+          nodes={chart.nodes}
+          edges={chart.edges}
+          onNodeClick={handleNodeClick}
+        />
       </div>
     </div>
   );

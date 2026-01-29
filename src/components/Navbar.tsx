@@ -4,6 +4,7 @@ import { Menu, X, BarChart3, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { MOCK_TENANTS } from '@/lib/tenants';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 interface NavbarProps {
   tenantLogo?: string;
@@ -56,7 +57,9 @@ export function Navbar({ tenantLogo }: NavbarProps) {
               </Link>
             ))}
             
-            {user ? (
+                <ThemeToggle />
+                
+                {user ? (
               <>
                 {isSubscribed && (
                   <Link
