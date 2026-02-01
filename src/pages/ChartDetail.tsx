@@ -1,37 +1,46 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Printer, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/Spinner';
 import { useAuth } from '@/contexts/AuthContext';
 import { InteractiveFlowChart } from '@/components/charts/InteractiveFlowChart';
+import { TorbayChart, ChartData as TorbayChartData, Treatment } from '@/components/charts/TorbayChart';
+import { HIP_KNEE_CHART_DATA, KNEE_ARTHRITIS_CHART_DATA, HIP_ARTHRITIS_CHART_DATA } from '@/data/hipKneeChartData';
 
 const API_BASE = import.meta.env.VITE_API_BASE || 'https://api.torbaycharts.com';
-const MOCK_MODE = true; // Toggle for testing
+const MOCK_MODE = true;
 
-interface ChartNode {
+// Map slugs to Torbay chart data
+const TORBAY_CHART_MAP: Record<string, TorbayChartData> = {
+  'hip-knee-arthritis': HIP_KNEE_CHART_DATA,
+  'knee-arthritis': KNEE_ARTHRITIS_CHART_DATA,
+  'hip-arthritis': HIP_ARTHRITIS_CHART_DATA,
+};
+
+interface FlowChartNode {
   id: string;
   type?: string;
   data: { label: string };
   position: { x: number; y: number };
 }
 
-interface ChartEdge {
+interface FlowChartEdge {
   id: string;
   source: string;
   target: string;
   label?: string;
 }
 
-interface ChartData {
+interface FlowChartData {
   slug: string;
   title: string;
   description: string;
-  nodes: ChartNode[];
-  edges: ChartEdge[];
+  nodes: FlowChartNode[];
+  edges: FlowChartEdge[];
 }
 
-const MOCK_CHART_DATA: Record<string, ChartData> = {
+const MOCK_FLOWCHART_DATA: Record<string, FlowChartData> = {
   'anticoagulation-af': {
     slug: 'anticoagulation-af',
     title: 'Anticoagulation in Atrial Fibrillation',
@@ -76,8 +85,7 @@ const MOCK_CHART_DATA: Record<string, ChartData> = {
   },
 };
 
-// Generate generic chart for unknown slugs
-function generateGenericChart(slug: string): ChartData {
+function generateGenericFlowChart(slug: string): FlowChartData {
   return {
     slug,
     title: slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
@@ -102,24 +110,35 @@ function generateGenericChart(slug: string): ChartData {
 
 export default function ChartDetail() {
   const { slug } = useParams<{ slug: string }>();
-  const [chart, setChart] = useState<ChartData | null>(null);
+  const navigate = useNavigate();
+  const [flowChart, setFlowChart] = useState<FlowChartData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isPrinting, setIsPrinting] = useState(false);
   const { token } = useAuth();
 
+  // Check if this is a Torbay-style chart
+  const torbayChartData = slug ? TORBAY_CHART_MAP[slug] : null;
+  const isTorbayChart = !!torbayChartData;
+
   useEffect(() => {
     async function fetchChart() {
       if (!slug) return;
 
+      // If it's a Torbay chart, we already have the data
+      if (TORBAY_CHART_MAP[slug]) {
+        setIsLoading(false);
+        return;
+      }
+
       try {
         if (MOCK_MODE) {
           await new Promise(resolve => setTimeout(resolve, 300));
-          const mockChart = MOCK_CHART_DATA[slug];
+          const mockChart = MOCK_FLOWCHART_DATA[slug];
           if (mockChart) {
-            setChart(mockChart);
+            setFlowChart(mockChart);
           } else {
-            setChart(generateGenericChart(slug));
+            setFlowChart(generateGenericFlowChart(slug));
           }
           setIsLoading(false);
           return;
@@ -142,7 +161,7 @@ export default function ChartDetail() {
         }
 
         const data = await response.json();
-        setChart(data);
+        setFlowChart(data);
 
         // Track analytics
         fetch(`${API_BASE}/analytics/event`, {
@@ -168,27 +187,9 @@ export default function ChartDetail() {
 
   const handlePrint = useCallback(async () => {
     setIsPrinting(true);
-    try {
-      const response = await fetch(`${API_BASE}/charts/${slug}/print`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to generate print version');
-      }
-
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-      window.open(url, '_blank');
-    } catch (err) {
-      console.error('Print error:', err);
-    } finally {
-      setIsPrinting(false);
-    }
-  }, [slug, token]);
+    window.print();
+    setIsPrinting(false);
+  }, []);
 
   const handleDownload = useCallback(async () => {
     setIsPrinting(true);
@@ -222,8 +223,11 @@ export default function ChartDetail() {
 
   const handleNodeClick = useCallback((nodeId: string) => {
     console.log('Node clicked:', nodeId);
-    // Could be used for navigation, showing details, etc.
   }, []);
+
+  const handleTreatmentClick = useCallback((treatment: Treatment) => {
+    navigate(`/charts/${slug}/treatment/${treatment.slug}`);
+  }, [slug, navigate]);
 
   if (isLoading) {
     return (
@@ -248,7 +252,22 @@ export default function ChartDetail() {
     );
   }
 
-  if (!chart) {
+  // Render Torbay-style chart for hip/knee/arthritis
+  if (isTorbayChart && torbayChartData) {
+    return (
+      <div className="py-6">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <TorbayChart 
+            data={torbayChartData} 
+            onTreatmentClick={handleTreatmentClick}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  // Render flowchart for other chart types
+  if (!flowChart) {
     return null;
   }
 
@@ -265,8 +284,8 @@ export default function ChartDetail() {
               <ArrowLeft className="h-4 w-4" />
               Back to charts
             </Link>
-            <h1 className="text-3xl font-bold text-foreground">{chart.title}</h1>
-            <p className="mt-2 text-muted-foreground">{chart.description}</p>
+            <h1 className="text-3xl font-bold text-foreground">{flowChart.title}</h1>
+            <p className="mt-2 text-muted-foreground">{flowChart.description}</p>
           </div>
           
           <div className="flex gap-2">
@@ -295,8 +314,8 @@ export default function ChartDetail() {
 
         {/* Interactive Flow Chart */}
         <InteractiveFlowChart 
-          nodes={chart.nodes}
-          edges={chart.edges}
+          nodes={flowChart.nodes}
+          edges={flowChart.edges}
           onNodeClick={handleNodeClick}
         />
       </div>

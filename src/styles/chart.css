@@ -1,0 +1,399 @@
+/* Torbay Chart Styles */
+
+/* Stage Colors - Disease progression from healthy to severe */
+:root {
+  --chart-torbay-blue: #0D61B6;
+  --chart-stage1-color: #73c3b4;
+  --chart-stage2-color: #84b162;
+  --chart-stage3-color: #f6a92d;
+  --chart-stage4-color: #ec822a;
+  --chart-stage5-color: #d34232;
+  --chart-stage6-color: #713954;
+}
+
+/* Chart Container */
+.chart-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.chartarea {
+  border: 1px solid hsl(var(--border));
+  border-radius: 12px;
+  overflow: hidden;
+  padding: 0px;
+  box-shadow: 0 3px 10px rgb(0 0 0 / 0.1);
+  background: hsl(var(--card));
+}
+
+/* Column Layout */
+.col-legend {
+  width: 4%;
+  min-width: 45px;
+  float: left;
+  text-align: center;
+  padding: 1em 0;
+  vertical-align: middle;
+  background-color: var(--chart-torbay-blue);
+  color: white;
+}
+
+.col-legend img,
+.col-legend svg {
+  width: 24px;
+  height: 24px;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.col-chart {
+  width: 96%;
+  padding-left: 12px;
+  float: left;
+}
+
+/* Stage Column Headers */
+.stage-column {
+  width: 16.666%;
+  float: left;
+  text-align: center;
+  font-weight: bold;
+  padding: 12px 8px;
+  border-bottom: 3px solid;
+}
+
+.stage-column-1 {
+  color: var(--chart-stage1-color);
+  border-bottom-color: var(--chart-stage1-color);
+  border-right: 4px solid var(--chart-stage1-color);
+}
+
+.stage-column-2 {
+  color: var(--chart-stage2-color);
+  border-bottom-color: var(--chart-stage2-color);
+  border-right: 4px solid var(--chart-stage2-color);
+}
+
+.stage-column-3 {
+  color: var(--chart-stage3-color);
+  border-bottom-color: var(--chart-stage3-color);
+  border-right: 4px solid var(--chart-stage3-color);
+}
+
+.stage-column-4 {
+  color: var(--chart-stage4-color);
+  border-bottom-color: var(--chart-stage4-color);
+  border-right: 4px solid var(--chart-stage4-color);
+}
+
+.stage-column-5 {
+  color: var(--chart-stage5-color);
+  border-bottom-color: var(--chart-stage5-color);
+  border-right: 4px solid var(--chart-stage5-color);
+}
+
+.stage-column-6 {
+  color: var(--chart-stage6-color);
+  border-bottom-color: var(--chart-stage6-color);
+  border-right: 4px solid var(--chart-stage6-color);
+}
+
+/* Study/Treatment Row */
+.study-row {
+  min-height: 60px;
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.study-row:last-child {
+  border-bottom: none;
+}
+
+/* Treatment Bar */
+.treatment-bar {
+  padding: 5px 6px;
+  min-height: 40px;
+  line-height: 30px;
+  border-radius: 20px;
+  margin: 4px 0;
+  display: inline-flex;
+  align-items: center;
+}
+
+.treatment-label {
+  background-color: white;
+  color: hsl(var(--foreground));
+  border-radius: 18px;
+  padding: 2px 12px 2px 6px;
+  font-weight: 600;
+  text-transform: capitalize;
+  border: 1px solid hsl(var(--border));
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.treatment-label:hover {
+  background-color: hsl(var(--muted));
+}
+
+.treatment-info-icon {
+  color: var(--chart-torbay-blue);
+  font-size: 12px;
+}
+
+/* Treatment Toggle Switch */
+.treatment-toggle {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 8px;
+}
+
+/* Section Headers */
+.chart-section-header {
+  text-align: center;
+  padding: 12px 0;
+  font-weight: bold;
+  color: var(--chart-torbay-blue);
+  font-size: 1.1rem;
+  margin-top: 24px;
+  margin-bottom: 8px;
+}
+
+/* Legend Icons */
+.legend-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 80px;
+}
+
+.legend-icon img,
+.legend-icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+/* Pain Graph Area */
+.pain-graph {
+  width: 100%;
+  height: 150px;
+  background: linear-gradient(to right, 
+    var(--chart-stage1-color) 0%, 
+    var(--chart-stage2-color) 20%, 
+    var(--chart-stage3-color) 40%, 
+    var(--chart-stage4-color) 60%, 
+    var(--chart-stage5-color) 80%, 
+    var(--chart-stage6-color) 100%
+  );
+  border-radius: 8px;
+  margin: 8px 0;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+}
+
+.pain-graph::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 70%;
+  background: linear-gradient(to right,
+    transparent 0%,
+    rgba(255,255,255,0.3) 16.666%,
+    rgba(255,255,255,0.2) 33.333%,
+    rgba(255,255,255,0.1) 50%,
+    transparent 66.666%,
+    transparent 100%
+  );
+  clip-path: polygon(0 100%, 100% 0, 100% 100%);
+}
+
+/* Mobility Icons Row */
+.mobility-icons-row {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 12px 0;
+}
+
+.mobility-icon {
+  text-align: center;
+  flex: 1;
+}
+
+.mobility-icon svg,
+.mobility-icon img {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto;
+}
+
+/* Exam Criteria */
+.exam-criteria {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 16px 8px;
+}
+
+.exam-criteria-cell {
+  flex: 1;
+  text-align: center;
+  padding: 8px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+/* Stage Buttons */
+.stage-btn {
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 12px;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.stage-btn-1 { background-color: var(--chart-stage1-color); }
+.stage-btn-2 { background-color: var(--chart-stage2-color); }
+.stage-btn-3 { background-color: var(--chart-stage3-color); }
+.stage-btn-4 { background-color: var(--chart-stage4-color); }
+.stage-btn-5 { background-color: var(--chart-stage5-color); }
+.stage-btn-6 { background-color: var(--chart-stage6-color); }
+
+/* Stage Icon Colors */
+.stage-icon-1 { color: var(--chart-stage1-color); }
+.stage-icon-2 { color: var(--chart-stage2-color); }
+.stage-icon-3 { color: var(--chart-stage3-color); }
+.stage-icon-4 { color: var(--chart-stage4-color); }
+.stage-icon-5 { color: var(--chart-stage5-color); }
+.stage-icon-6 { color: var(--chart-stage6-color); }
+
+/* Chart Header */
+.chart-header-bar {
+  background: white;
+  border-bottom: 5px solid var(--chart-torbay-blue);
+  padding: 12px 16px;
+}
+
+.chart-title {
+  color: var(--chart-torbay-blue);
+  font-weight: bold;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+/* Legend Scroll Buttons */
+.legend-nav-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  padding: 12px 0;
+  flex-wrap: wrap;
+}
+
+.legend-nav-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.legend-nav-btn:hover {
+  background: hsl(var(--muted));
+  transform: scale(1.05);
+}
+
+.legend-nav-btn img {
+  height: 50px;
+  width: auto;
+}
+
+/* Torbay Alert */
+.torbay-alert {
+  background: rgba(211, 66, 50, 0.12);
+  border: 1px solid var(--chart-stage5-color);
+  border-radius: 10px;
+  padding: 12px 16px;
+  color: hsl(var(--foreground));
+  margin-top: 16px;
+}
+
+/* Breadcrumb */
+.chart-breadcrumb {
+  font-size: 14px;
+  padding: 8px 0;
+}
+
+.chart-breadcrumb a {
+  color: hsl(var(--foreground));
+  text-decoration: none;
+}
+
+.chart-breadcrumb a:hover {
+  color: var(--chart-torbay-blue);
+}
+
+/* Action Buttons */
+.chart-action-btn {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .col-legend {
+    width: 10%;
+    min-width: 35px;
+  }
+  
+  .col-chart {
+    width: 90%;
+    padding-left: 8px;
+  }
+  
+  .treatment-label {
+    font-size: 11px;
+    padding: 2px 8px 2px 4px;
+  }
+  
+  .stage-column {
+    font-size: 11px;
+    padding: 8px 4px;
+  }
+}
+
+/* Print styles */
+@media print {
+  .chartarea {
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+  
+  .chart-action-btn,
+  .legend-nav-buttons {
+    display: none;
+  }
+}
+
+/* Clearfix */
+.clearfix::after {
+  content: "";
+  display: table;
+  clear: both;
+}
