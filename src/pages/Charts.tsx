@@ -2,45 +2,67 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { BarChart3 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { SkeletonCard } from '@/components/SkeletonCard';
 import { useAuth } from '@/contexts/AuthContext';
 
 const API_BASE = import.meta.env.VITE_API_BASE || 'https://api.torbaycharts.com';
 const MOCK_MODE = true; // Toggle for testing
 
-const MOCK_CHARTS: Chart[] = [
-  {
-    slug: 'anticoagulation-af',
-    title: 'Anticoagulation in Atrial Fibrillation',
-    description: 'Decision aid for choosing anticoagulation therapy in patients with AF.',
-    image: undefined,
-  },
-  {
-    slug: 'chest-pain-assessment',
-    title: 'Chest Pain Assessment',
-    description: 'Flowchart for evaluating and triaging patients presenting with chest pain.',
-    image: undefined,
-  },
-  {
-    slug: 'diabetes-management',
-    title: 'Type 2 Diabetes Management',
-    description: 'Step-by-step decision support for glucose-lowering therapy selection.',
-    image: undefined,
-  },
-  {
-    slug: 'copd-exacerbation',
-    title: 'COPD Exacerbation Management',
-    description: 'Treatment pathway for acute exacerbations of chronic obstructive pulmonary disease.',
-    image: undefined,
-  },
-];
-
 interface Chart {
   slug: string;
   title: string;
   description: string;
   image?: string;
+  category?: string;
 }
+
+const MOCK_CHARTS: Chart[] = [
+  {
+    slug: 'hip-knee-arthritis',
+    title: 'Hip and Knee Arthritis',
+    description: 'Decision aid for managing hip and knee osteoarthritis from early stage to surgical intervention.',
+    category: 'Orthopaedics',
+  },
+  {
+    slug: 'knee-arthritis',
+    title: 'Knee Arthritis',
+    description: 'Decision aid for managing knee osteoarthritis including conservative and surgical options.',
+    category: 'Orthopaedics',
+  },
+  {
+    slug: 'hip-arthritis',
+    title: 'Hip Arthritis',
+    description: 'Decision aid for managing hip osteoarthritis from diagnosis to total hip replacement.',
+    category: 'Orthopaedics',
+  },
+  {
+    slug: 'anticoagulation-af',
+    title: 'Anticoagulation in Atrial Fibrillation',
+    description: 'Decision aid for choosing anticoagulation therapy in patients with AF.',
+    category: 'Cardiology',
+  },
+  {
+    slug: 'chest-pain-assessment',
+    title: 'Chest Pain Assessment',
+    description: 'Flowchart for evaluating and triaging patients presenting with chest pain.',
+    category: 'Emergency',
+  },
+  {
+    slug: 'diabetes-management',
+    title: 'Type 2 Diabetes Management',
+    description: 'Step-by-step decision support for glucose-lowering therapy selection.',
+    category: 'Endocrinology',
+  },
+];
+
+// Category colors
+const CATEGORY_COLORS: Record<string, string> = {
+  'Orthopaedics': 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
+  'Cardiology': 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
+  'Emergency': 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300',
+  'Endocrinology': 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300',
+};
 
 export default function Charts() {
   const [charts, setCharts] = useState<Chart[]>([]);
@@ -82,6 +104,7 @@ export default function Charts() {
 
     fetchCharts();
   }, [token]);
+
   if (isLoading) {
     return (
       <div className="py-12">
@@ -132,13 +155,29 @@ export default function Charts() {
   return (
     <div className="py-12">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <h1 className="text-3xl font-bold text-foreground mb-8">Decision Aids</h1>
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-foreground">Decision Aids</h1>
+          <p className="mt-2 text-muted-foreground">
+            Interactive clinical decision support tools for shared decision making
+          </p>
+        </div>
+        
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {charts.map((chart) => (
             <Link key={chart.slug} to={`/charts/${chart.slug}`}>
-              <Card className="h-full transition-all hover:shadow-lg hover:border-primary/50">
+              <Card className="h-full transition-all hover:shadow-lg hover:border-primary/50 group">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-lg">{chart.title}</CardTitle>
+                  {chart.category && (
+                    <Badge 
+                      variant="secondary" 
+                      className={`w-fit mb-2 ${CATEGORY_COLORS[chart.category] || ''}`}
+                    >
+                      {chart.category}
+                    </Badge>
+                  )}
+                  <CardTitle className="text-lg group-hover:text-primary transition-colors">
+                    {chart.title}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   {chart.image ? (
@@ -148,8 +187,8 @@ export default function Charts() {
                       className="w-full h-32 object-cover rounded-md mb-3"
                     />
                   ) : (
-                    <div className="w-full h-32 bg-muted rounded-md mb-3 flex items-center justify-center">
-                      <BarChart3 className="h-8 w-8 text-muted-foreground/30" />
+                    <div className="w-full h-32 bg-gradient-to-r from-[#73C3B4] via-[#F6A92D] to-[#D34232] rounded-md mb-3 flex items-center justify-center opacity-80">
+                      <BarChart3 className="h-12 w-12 text-white drop-shadow-md" />
                     </div>
                   )}
                   <CardDescription>{chart.description}</CardDescription>
