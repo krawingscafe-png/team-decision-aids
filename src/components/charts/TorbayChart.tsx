@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
-import { Printer, Download, Info, ChevronLeft, ChevronRight, Plus, Minus } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Printer, Download, Info, Plus, Minus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
@@ -61,8 +61,8 @@ interface TorbayChartProps {
 }
 
 export function TorbayChart({ data, onTreatmentClick }: TorbayChartProps) {
+  const navigate = useNavigate();
   const [selectedTreatments, setSelectedTreatments] = useState<string[]>([]);
-  const [mobileNavIndex, setMobileNavIndex] = useState(0);
   
   // Refs for scroll navigation
   const diagnosisStagingRef = useRef<HTMLDivElement>(null);
@@ -92,6 +92,12 @@ export function TorbayChart({ data, onTreatmentClick }: TorbayChartProps) {
     setSelectedTreatments([]);
   };
 
+  const handleCompare = () => {
+    // Store selected treatments and navigate to comparison page
+    localStorage.setItem('selectedCharts', selectedTreatments.join(','));
+    navigate(`/charts/${data.slug}/compare`);
+  };
+
   const scrollToSection = (ref: React.RefObject<HTMLDivElement>) => {
     ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
@@ -105,6 +111,10 @@ export function TorbayChart({ data, onTreatmentClick }: TorbayChartProps) {
       title: "Downloading PDF",
       description: "Your infographic is being prepared for download.",
     });
+  };
+
+  const handleTreatmentClick = (treatment: Treatment) => {
+    navigate(`/charts/${data.slug}/treatment/${treatment.slug}`);
   };
 
   // Get gradient colors for a treatment bar
@@ -149,7 +159,7 @@ export function TorbayChart({ data, onTreatmentClick }: TorbayChartProps) {
             />
             <span 
               className="cursor-pointer hover:text-primary"
-              onClick={() => onTreatmentClick?.(treatment)}
+              onClick={() => handleTreatmentClick(treatment)}
             >
               {treatment.name}
             </span>
@@ -161,20 +171,12 @@ export function TorbayChart({ data, onTreatmentClick }: TorbayChartProps) {
   };
 
   // Render a category section
-  const renderCategorySection = (category: TreatmentCategory, showLegend = true) => (
+  const renderCategorySection = (category: TreatmentCategory) => (
     <div className="study-row" key={category.name}>
-      {showLegend && (
-        <div className="col-legend flex items-center justify-center">
-          <div className="legend-icon">
-            {category.icon ? (
-              <img src={category.icon} alt={category.name} className="w-6 h-6" />
-            ) : (
-              <div className="w-6 h-6 rounded bg-white/20" />
-            )}
-          </div>
-        </div>
-      )}
-      <div className={cn("col-chart py-2", !showLegend && "w-full pl-4")}>
+      <div className="col-legend flex items-center justify-center">
+        <span className="legend-text-vertical">{category.name}</span>
+      </div>
+      <div className="col-chart py-2">
         {category.treatments.map(treatment => renderTreatmentBar(treatment))}
       </div>
     </div>
@@ -183,7 +185,7 @@ export function TorbayChart({ data, onTreatmentClick }: TorbayChartProps) {
   // Render stage headers
   const renderStageHeaders = () => (
     <div className="flex">
-      <div className="col-legend" />
+      <div className="col-legend" style={{ background: 'transparent' }} />
       <div className="col-chart flex">
         {(data.stages || STAGE_NAMES).map((stage, index) => (
           <div 
@@ -193,6 +195,18 @@ export function TorbayChart({ data, onTreatmentClick }: TorbayChartProps) {
             {stage}
           </div>
         ))}
+      </div>
+    </div>
+  );
+
+  // Render row with vertical label
+  const renderRowWithVerticalLabel = (label: string, content: React.ReactNode) => (
+    <div className="study-row">
+      <div className="col-legend flex items-center justify-center">
+        <span className="legend-text-vertical">{label}</span>
+      </div>
+      <div className="col-chart">
+        {content}
       </div>
     </div>
   );
@@ -215,15 +229,13 @@ export function TorbayChart({ data, onTreatmentClick }: TorbayChartProps) {
           <div className="flex gap-2">
             <Button variant="outline" size="sm" asChild>
               <Link to={`/charts/${data.slug}`}>
-                <span className="sr-only">Chart view</span>
-                📊
+                📊 Chart
               </Link>
             </Button>
-            <Button variant="secondary" size="sm">
-              📝
-            </Button>
-            <Button variant="secondary" size="sm">
-              💊
+            <Button variant="secondary" size="sm" asChild>
+              <Link to={`/charts/${data.slug}/treatments`}>
+                💊 All Treatments
+              </Link>
             </Button>
           </div>
           
@@ -235,9 +247,6 @@ export function TorbayChart({ data, onTreatmentClick }: TorbayChartProps) {
             </Button>
             <Button variant="outline" size="sm" onClick={handleDownload}>
               <Download className="h-4 w-4" />
-            </Button>
-            <Button variant="outline" size="sm">
-              <Info className="h-4 w-4" />
             </Button>
           </div>
         </div>
@@ -265,10 +274,14 @@ export function TorbayChart({ data, onTreatmentClick }: TorbayChartProps) {
       {/* Comparison Panel */}
       {selectedTreatments.length >= 2 && (
         <div className="fixed bottom-4 right-4 z-50 bg-card border rounded-lg shadow-lg p-4">
-          <h4 className="font-semibold mb-2">{selectedTreatments.length} selected</h4>
+          <h4 className="font-semibold mb-2">{selectedTreatments.length} treatments selected</h4>
           <div className="flex gap-2">
-            <Button size="sm" variant="default">Compare</Button>
-            <Button size="sm" variant="secondary" onClick={clearSelection}>Clear</Button>
+            <Button size="sm" variant="default" onClick={handleCompare}>
+              Compare
+            </Button>
+            <Button size="sm" variant="secondary" onClick={clearSelection}>
+              Clear
+            </Button>
           </div>
         </div>
       )}
@@ -280,87 +293,69 @@ export function TorbayChart({ data, onTreatmentClick }: TorbayChartProps) {
           {renderStageHeaders()}
           
           {/* Pain Graph */}
-          <div className="study-row">
-            <div className="col-legend flex items-center justify-center">
-              <span className="text-xs font-medium">Pain</span>
-            </div>
-            <div className="col-chart p-2">
+          {renderRowWithVerticalLabel('Pain', (
+            <div className="p-2">
               <div className="pain-graph" />
             </div>
-          </div>
+          ))}
 
           {/* Mobility */}
-          <div className="study-row">
-            <div className="col-legend flex items-center justify-center">
-              <span className="text-xs font-medium">Mobility</span>
-            </div>
-            <div className="col-chart">
-              <div className="mobility-icons-row">
-                {[1, 2, 3, 4, 5, 6].map((stage) => (
-                  <div key={stage} className="mobility-icon">
-                    <div 
-                      className="w-16 h-16 rounded-full flex items-center justify-center text-2xl"
-                      style={{ backgroundColor: STAGE_COLORS[stage - 1], color: 'white' }}
-                    >
-                      🚶
-                    </div>
+          {renderRowWithVerticalLabel('Mobility', (
+            <div className="mobility-icons-row">
+              {[1, 2, 3, 4, 5, 6].map((stage) => (
+                <div key={stage} className="mobility-icon">
+                  <div 
+                    className="w-12 h-12 rounded-full flex items-center justify-center text-xl mx-auto"
+                    style={{ backgroundColor: STAGE_COLORS[stage - 1], color: 'white' }}
+                  >
+                    🚶
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
-          </div>
+          ))}
 
           {/* Daily Activities */}
-          <div className="study-row">
-            <div className="col-legend flex items-center justify-center">
-              <span className="text-xs font-medium">Daily Activities</span>
-            </div>
-            <div className="col-chart">
-              <div className="mobility-icons-row">
-                {[1, 2, 3, 4, 5, 6].map((stage) => (
-                  <div key={stage} className="mobility-icon">
-                    <div 
-                      className="w-16 h-16 rounded-full flex items-center justify-center text-2xl"
-                      style={{ backgroundColor: STAGE_COLORS[stage - 1], color: 'white' }}
-                    >
-                      🏃
-                    </div>
+          {renderRowWithVerticalLabel('Daily Activities', (
+            <div className="mobility-icons-row">
+              {[1, 2, 3, 4, 5, 6].map((stage) => (
+                <div key={stage} className="mobility-icon">
+                  <div 
+                    className="w-12 h-12 rounded-full flex items-center justify-center text-xl mx-auto"
+                    style={{ backgroundColor: STAGE_COLORS[stage - 1], color: 'white' }}
+                  >
+                    🏃
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
-          </div>
+          ))}
 
           {/* Exam Criteria */}
-          <div className="study-row">
-            <div className="col-legend flex items-center justify-center">
-              <span className="text-xs font-medium">Exam</span>
+          {renderRowWithVerticalLabel('Exam', (
+            <div className="exam-criteria">
+              {[1, 2, 3, 4, 5, 6].map((stage) => (
+                <div 
+                  key={stage} 
+                  className="exam-criteria-cell"
+                  style={{ color: STAGE_COLORS[stage - 1] }}
+                >
+                  {stage === 1 && (
+                    <div>
+                      <p>Leg →</p>
+                      <p>Stiff</p>
+                      <p>X-Ray</p>
+                    </div>
+                  )}
+                  {stage === 2 && <div><p>-</p><p>-</p><p>Normal</p></div>}
+                  {stage === 3 && <div><p>+</p><p>+</p><p>Mild</p></div>}
+                  {stage === 4 && <div><p>+</p><p>++</p><p>Mod</p></div>}
+                  {stage === 5 && <div><p>++</p><p>++</p><p>Severe</p></div>}
+                  {stage === 6 && <div><p>+++</p><p>+++</p><p>End</p></div>}
+                </div>
+              ))}
             </div>
-            <div className="col-chart">
-              <div className="exam-criteria">
-                {[1, 2, 3, 4, 5, 6].map((stage) => (
-                  <div 
-                    key={stage} 
-                    className="exam-criteria-cell"
-                    style={{ color: STAGE_COLORS[stage - 1] }}
-                  >
-                    {stage === 1 && (
-                      <div>
-                        <p>Leg Shortening →</p>
-                        <p>Stiffness</p>
-                        <p>X-Ray</p>
-                      </div>
-                    )}
-                    {stage === 2 && <div><p>-</p><p>-</p><p>Normal</p></div>}
-                    {stage === 3 && <div><p>+</p><p>+</p><p>Mild OA</p></div>}
-                    {stage === 4 && <div><p>+</p><p>++</p><p>Mod OA</p></div>}
-                    {stage === 5 && <div><p>++</p><p>++</p><p>Severe OA</p></div>}
-                    {stage === 6 && <div><p>+++</p><p>+++</p><p>End Stage</p></div>}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+          ))}
 
           {/* Diagnosis Categories */}
           {data.categories.diagnosisAndStaging.map(category => 
