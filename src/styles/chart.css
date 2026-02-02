@@ -9,6 +9,21 @@
   --chart-stage4-color: #ec822a;
   --chart-stage5-color: #d34232;
   --chart-stage6-color: #713954;
+  
+  /* Light mode backgrounds */
+  --chart-bg: #ffffff;
+  --chart-card-bg: #ffffff;
+  --chart-text: #1a1a2e;
+  --chart-text-muted: #6b7280;
+  --chart-border: #e5e7eb;
+}
+
+.dark {
+  --chart-bg: hsl(215 25% 12%);
+  --chart-card-bg: hsl(215 25% 15%);
+  --chart-text: #f3f4f6;
+  --chart-text-muted: #9ca3af;
+  --chart-border: hsl(215 20% 25%);
 }
 
 /* Chart Container */
@@ -18,37 +33,51 @@
 }
 
 .chartarea {
-  border: 1px solid hsl(var(--border));
+  border: 1px solid var(--chart-border);
   border-radius: 12px;
   overflow: hidden;
   padding: 0px;
   box-shadow: 0 3px 10px rgb(0 0 0 / 0.1);
-  background: hsl(var(--card));
+  background: var(--chart-card-bg);
 }
 
 /* Column Layout */
 .col-legend {
-  width: 4%;
-  min-width: 45px;
+  width: 60px;
+  min-width: 60px;
+  max-width: 60px;
   float: left;
   text-align: center;
-  padding: 1em 0;
+  padding: 0.5em 0;
   vertical-align: middle;
   background-color: var(--chart-torbay-blue);
   color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .col-legend img,
 .col-legend svg {
   width: 24px;
   height: 24px;
-  position: relative;
-  top: 50%;
-  transform: translateY(-50%);
+}
+
+/* Vertical Text for Row Headers */
+.legend-text-vertical {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  padding: 8px 0;
 }
 
 .col-chart {
-  width: 96%;
+  width: calc(100% - 60px);
   padding-left: 12px;
   float: left;
 }
@@ -61,6 +90,8 @@
   font-weight: bold;
   padding: 12px 8px;
   border-bottom: 3px solid;
+  font-size: 12px;
+  background: var(--chart-card-bg);
 }
 
 .stage-column-1 {
@@ -104,7 +135,8 @@
   min-height: 60px;
   display: flex;
   align-items: stretch;
-  border-bottom: 1px solid hsl(var(--border));
+  border-bottom: 1px solid var(--chart-border);
+  background: var(--chart-card-bg);
 }
 
 .study-row:last-child {
@@ -123,13 +155,13 @@
 }
 
 .treatment-label {
-  background-color: white;
-  color: hsl(var(--foreground));
+  background-color: var(--chart-card-bg);
+  color: var(--chart-text);
   border-radius: 18px;
   padding: 2px 12px 2px 6px;
   font-weight: 600;
   text-transform: capitalize;
-  border: 1px solid hsl(var(--border));
+  border: 1px solid var(--chart-border);
   font-size: 13px;
   display: flex;
   align-items: center;
@@ -139,7 +171,8 @@
 }
 
 .treatment-label:hover {
-  background-color: hsl(var(--muted));
+  background-color: var(--chart-bg);
+  border-color: var(--chart-torbay-blue);
 }
 
 .treatment-info-icon {
@@ -184,7 +217,7 @@
 /* Pain Graph Area */
 .pain-graph {
   width: 100%;
-  height: 150px;
+  height: 120px;
   background: linear-gradient(to right, 
     var(--chart-stage1-color) 0%, 
     var(--chart-stage2-color) 20%, 
@@ -223,7 +256,7 @@
   display: flex;
   justify-content: space-around;
   align-items: center;
-  padding: 12px 0;
+  padding: 8px 0;
 }
 
 .mobility-icon {
@@ -233,8 +266,8 @@
 
 .mobility-icon svg,
 .mobility-icon img {
-  width: 80px;
-  height: 80px;
+  width: 48px;
+  height: 48px;
   margin: 0 auto;
 }
 
@@ -244,15 +277,16 @@
   align-items: center;
   justify-content: center;
   height: 100%;
-  padding: 16px 8px;
+  padding: 8px 4px;
 }
 
 .exam-criteria-cell {
   flex: 1;
   text-align: center;
-  padding: 8px;
+  padding: 4px;
   font-weight: bold;
-  font-size: 14px;
+  font-size: 11px;
+  line-height: 1.3;
 }
 
 /* Stage Buttons */
@@ -283,7 +317,7 @@
 
 /* Chart Header */
 .chart-header-bar {
-  background: white;
+  background: var(--chart-card-bg);
   border-bottom: 5px solid var(--chart-torbay-blue);
   padding: 12px 16px;
 }
@@ -314,7 +348,7 @@
 }
 
 .legend-nav-btn:hover {
-  background: hsl(var(--muted));
+  background: var(--chart-border);
   transform: scale(1.05);
 }
 
@@ -329,7 +363,7 @@
   border: 1px solid var(--chart-stage5-color);
   border-radius: 10px;
   padding: 12px 16px;
-  color: hsl(var(--foreground));
+  color: var(--chart-text);
   margin-top: 16px;
 }
 
@@ -340,7 +374,7 @@
 }
 
 .chart-breadcrumb a {
-  color: hsl(var(--foreground));
+  color: var(--chart-text);
   text-decoration: none;
 }
 
@@ -355,15 +389,134 @@
   font-size: 14px;
 }
 
+/* Treatment Detail Page Styles */
+.treatment-detail-card {
+  background: var(--chart-card-bg);
+  border: 1px solid var(--chart-border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.treatment-detail-card .card-title {
+  padding: 12px 16px;
+  font-weight: 700;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.treatment-detail-card .card-body {
+  padding: 16px;
+}
+
+.card-what-is-it .card-title { 
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+  color: white; 
+}
+
+.card-how-where .card-title { 
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); 
+  color: white; 
+}
+
+.card-applicable-stage .card-title { 
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); 
+  color: white; 
+}
+
+.card-best-stage .card-title { 
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); 
+  color: white; 
+}
+
+.card-benefits .card-title { 
+  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); 
+  color: #1a1a2e; 
+}
+
+.card-risks .card-title { 
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); 
+  color: #1a1a2e; 
+}
+
+.card-effort .card-title { 
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); 
+  color: #1a1a2e; 
+}
+
+.card-cost .card-title { 
+  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); 
+  color: #1a1a2e; 
+}
+
+/* Stage Indicator Buttons */
+.stage-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 14px;
+  margin: 2px;
+}
+
+.stage-indicator.active {
+  color: white;
+}
+
+.stage-indicator.inactive {
+  background: var(--chart-border);
+  color: var(--chart-text-muted);
+  opacity: 0.5;
+}
+
+/* Comparison Table */
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.comparison-table th,
+.comparison-table td {
+  border: 1px solid var(--chart-border);
+  padding: 12px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.comparison-table th {
+  background: var(--chart-torbay-blue);
+  color: white;
+  font-weight: 600;
+}
+
+.comparison-table .sticky-col {
+  position: sticky;
+  left: 0;
+  background: var(--chart-card-bg);
+  font-weight: 600;
+  z-index: 1;
+  min-width: 180px;
+}
+
+.comparison-table tbody tr:nth-child(odd) {
+  background: var(--chart-bg);
+}
+
+.comparison-table tbody tr:nth-child(even) {
+  background: var(--chart-card-bg);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .col-legend {
-    width: 10%;
-    min-width: 35px;
+    width: 40px;
+    min-width: 40px;
   }
   
   .col-chart {
-    width: 90%;
+    width: calc(100% - 40px);
     padding-left: 8px;
   }
   
@@ -373,8 +526,18 @@
   }
   
   .stage-column {
-    font-size: 11px;
-    padding: 8px 4px;
+    font-size: 9px;
+    padding: 8px 2px;
+  }
+  
+  .legend-text-vertical {
+    font-size: 9px;
+  }
+  
+  .mobility-icon svg,
+  .mobility-icon img {
+    width: 32px;
+    height: 32px;
   }
 }
 

@@ -20,6 +20,9 @@ import Pricing from "./pages/Pricing";
 import Login from "./pages/Login";
 import Charts from "./pages/Charts";
 import ChartDetail from "./pages/ChartDetail";
+import TreatmentDetail from "./pages/TreatmentDetail";
+import TreatmentComparison from "./pages/TreatmentComparison";
+import AllTreatments from "./pages/AllTreatments";
 import Profile from "./pages/Profile";
 import Billing from "./pages/Billing";
 import Checkout from "./pages/Checkout";
@@ -93,6 +96,30 @@ const App = () => {
                             element={
                               <Protected>
                                 <ChartDetail />
+                              </Protected>
+                            }
+                          />
+                          <Route
+                            path="/charts/:chartSlug/treatment/:treatmentSlug"
+                            element={
+                              <Protected>
+                                <TreatmentDetail />
+                              </Protected>
+                            }
+                          />
+                          <Route
+                            path="/charts/:chartSlug/compare"
+                            element={
+                              <Protected>
+                                <TreatmentComparison />
+                              </Protected>
+                            }
+                          />
+                          <Route
+                            path="/charts/:chartSlug/treatments"
+                            element={
+                              <Protected>
+                                <AllTreatments />
                               </Protected>
                             }
                           />
