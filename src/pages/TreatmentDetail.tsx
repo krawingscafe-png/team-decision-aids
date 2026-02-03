@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Printer, Download, Home, Building2, Syringe, Bed } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -104,6 +105,11 @@ const getDefaultDetails = () => ({
 export default function TreatmentDetail() {
   const { chartSlug, treatmentSlug } = useParams<{ chartSlug: string; treatmentSlug: string }>();
   const navigate = useNavigate();
+  
+  // Auto-scroll to top when component mounts or treatment changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [treatmentSlug]);
   
   const chartData = chartSlug ? CHART_DATA_MAP[chartSlug] : null;
   

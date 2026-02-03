@@ -76,6 +76,13 @@
   padding: 8px 0;
 }
 
+/* Mobile Vertical Text */
+.writing-vertical {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+}
+
 .col-chart {
   width: calc(100% - 60px);
   padding-left: 12px;
@@ -521,23 +528,156 @@
   }
   
   .treatment-label {
-    font-size: 11px;
-    padding: 2px 8px 2px 4px;
+    font-size: 10px;
+    padding: 2px 6px 2px 4px;
+    max-width: 100%;
+  }
+  
+  /* Treatment name text overflow handling */
+  .treatment-label span {
+    max-width: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+    vertical-align: middle;
   }
   
   .stage-column {
-    font-size: 9px;
-    padding: 8px 2px;
+    font-size: 8px;
+    padding: 6px 2px;
   }
   
   .legend-text-vertical {
-    font-size: 9px;
+    font-size: 8px;
   }
   
   .mobility-icon svg,
   .mobility-icon img {
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
+  }
+
+  /* Hide desktop chart on mobile */
+  .chart-desktop-view {
+    display: none;
+  }
+  
+  .chart-mobile-container {
+    display: block;
+  }
+}
+
+/* Desktop view */
+@media (min-width: 769px) {
+  .chart-desktop-view {
+    display: block;
+  }
+  
+  .chart-mobile-container {
+    display: none;
+  }
+}
+
+/* Mobile Chart Styles */
+.chart-mobile-container {
+  background: var(--chart-bg);
+}
+
+.mobile-treatment-item {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mobile-treatment-item:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.mobile-treatment-content {
+  background: var(--chart-card-bg);
+}
+
+.mobile-legend-col {
+  min-height: 80px;
+}
+
+.mobile-legend-text {
+  letter-spacing: 1px;
+}
+
+.treatment-name-mobile {
+  color: var(--chart-text);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.treatment-mini-bar {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.mobile-treatments-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 8px;
+}
+
+/* Treatment Bar Gradient Fixes */
+.treatment-bar {
+  padding: 4px 6px;
+  min-height: 36px;
+  line-height: 28px;
+  border-radius: 18px;
+  margin: 3px 0;
+  display: inline-flex;
+  align-items: center;
+  background-size: 100% 100%;
+  background-position: center;
+}
+
+.treatment-label {
+  background-color: var(--chart-card-bg);
+  color: var(--chart-text);
+  border-radius: 16px;
+  padding: 2px 10px 2px 6px;
+  font-weight: 600;
+  text-transform: capitalize;
+  border: 1px solid var(--chart-border);
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+/* Text shrinking for long treatment names */
+.treatment-label span {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 1024px) {
+  .treatment-label {
+    font-size: 11px;
+    padding: 2px 8px 2px 4px;
+  }
+  
+  .treatment-label span {
+    max-width: 120px;
+  }
+}
+
+@media (max-width: 640px) {
+  .treatment-label span {
+    max-width: 70px;
+    font-size: 10px;
   }
 }
 
@@ -551,6 +691,14 @@
   .chart-action-btn,
   .legend-nav-buttons {
     display: none;
+  }
+  
+  .chart-mobile-container {
+    display: none;
+  }
+  
+  .chart-desktop-view {
+    display: block;
   }
 }
 

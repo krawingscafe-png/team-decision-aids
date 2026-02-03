@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, BarChart3, Table2, Pill } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { HIP_KNEE_CHART_DATA, KNEE_ARTHRITIS_CHART_DATA, HIP_ARTHRITIS_CHART_DATA } from '@/data/hipKneeChartData';
 import { Treatment, ChartData } from '@/components/charts/TorbayChart';
@@ -60,6 +60,11 @@ const getDefaultData = () => ({
 export default function AllTreatments() {
   const { chartSlug } = useParams<{ chartSlug: string }>();
   
+  // Auto-scroll to top
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+  
   const chartData = chartSlug ? CHART_DATA_MAP[chartSlug] : null;
   
   if (!chartData) {
@@ -118,16 +123,30 @@ export default function AllTreatments() {
           <span className="text-muted-foreground">All Treatments</span>
         </nav>
 
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <Button variant="outline" size="sm" asChild>
-            <Link to={`/charts/${chartSlug}`}>
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Chart
-            </Link>
-          </Button>
+        {/* Header with view toggle */}
+        <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
+          <div className="flex gap-2">
+            <Button variant="secondary" size="sm" asChild>
+              <Link to={`/charts/${chartSlug}`}>
+                <BarChart3 className="h-4 w-4 mr-1" />
+                Chart
+              </Link>
+            </Button>
+            <Button variant="secondary" size="sm" asChild>
+              <Link to={`/charts/${chartSlug}/table`}>
+                <Table2 className="h-4 w-4 mr-1" />
+                Table
+              </Link>
+            </Button>
+            <Button variant="default" size="sm" asChild>
+              <Link to={`/charts/${chartSlug}/treatments`}>
+                <Pill className="h-4 w-4 mr-1" />
+                All Treatments
+              </Link>
+            </Button>
+          </div>
           
-          <h1 className="text-2xl font-bold text-primary">{chartData.name} - All Treatments</h1>
+          <h1 className="text-xl font-bold text-primary text-center flex-1">{chartData.name} - All Treatments</h1>
           
           <div className="w-32" />
         </div>

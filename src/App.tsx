@@ -23,6 +23,7 @@ import ChartDetail from "./pages/ChartDetail";
 import TreatmentDetail from "./pages/TreatmentDetail";
 import TreatmentComparison from "./pages/TreatmentComparison";
 import AllTreatments from "./pages/AllTreatments";
+import ChartTableView from "./pages/ChartTableView";
 import Profile from "./pages/Profile";
 import Billing from "./pages/Billing";
 import Checkout from "./pages/Checkout";
@@ -120,6 +121,14 @@ const App = () => {
                             element={
                               <Protected>
                                 <AllTreatments />
+                              </Protected>
+                            }
+                          />
+                          <Route
+                            path="/charts/:chartSlug/table"
+                            element={
+                              <Protected>
+                                <ChartTableView />
                               </Protected>
                             }
                           />
