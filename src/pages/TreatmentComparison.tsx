@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Printer, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -81,6 +82,11 @@ const getDefaultComparisonData = (treatment: Treatment) => ({
 export default function TreatmentComparison() {
   const { chartSlug } = useParams<{ chartSlug: string }>();
   const navigate = useNavigate();
+  
+  // Auto-scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
   
   const chartData = chartSlug ? CHART_DATA_MAP[chartSlug] : null;
   

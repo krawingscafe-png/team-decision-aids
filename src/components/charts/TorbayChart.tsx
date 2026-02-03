@@ -1,11 +1,13 @@
 import { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Printer, Download, Info, Plus, Minus } from 'lucide-react';
+import { Printer, Download, Info, BarChart3, Table2, Pill } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { ChartMobileView } from './ChartMobileView';
 import '@/styles/chart.css';
 
 // Stage colors for gradient backgrounds
@@ -62,6 +64,7 @@ interface TorbayChartProps {
 
 export function TorbayChart({ data, onTreatmentClick }: TorbayChartProps) {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const [selectedTreatments, setSelectedTreatments] = useState<string[]>([]);
   
   // Refs for scroll navigation
@@ -70,6 +73,11 @@ export function TorbayChart({ data, onTreatmentClick }: TorbayChartProps) {
   const mainlineTreatmentRef = useRef<HTMLDivElement>(null);
   const alternativeRef = useRef<HTMLDivElement>(null);
   const observationRef = useRef<HTMLDivElement>(null);
+
+  // Show mobile view on mobile devices
+  if (isMobile) {
+    return <ChartMobileView data={data} onTreatmentClick={onTreatmentClick} />;
+  }
 
   const handleToggleTreatment = (treatmentId: string, checked: boolean) => {
     if (checked && selectedTreatments.length >= 3) {
@@ -140,7 +148,7 @@ export function TorbayChart({ data, onTreatmentClick }: TorbayChartProps) {
     return (
       <div 
         key={treatment.id}
-        className="w-full py-1 px-2"
+        className="w-full py-1 px-1"
         style={{ 
           display: 'flex',
           marginLeft: `${(colStart - 1) * 16.666}%`,
@@ -155,15 +163,16 @@ export function TorbayChart({ data, onTreatmentClick }: TorbayChartProps) {
             <Switch
               checked={isSelected}
               onCheckedChange={(checked) => handleToggleTreatment(treatment.id, checked)}
-              className="scale-75"
+              className="scale-75 flex-shrink-0"
             />
             <span 
               className="cursor-pointer hover:text-primary"
               onClick={() => handleTreatmentClick(treatment)}
+              title={treatment.name}
             >
               {treatment.name}
             </span>
-            <Info className="h-3 w-3 text-[#0D61B6]" />
+            <Info className="h-3 w-3 text-[#0D61B6] flex-shrink-0" />
           </div>
         </div>
       </div>
@@ -212,7 +221,7 @@ export function TorbayChart({ data, onTreatmentClick }: TorbayChartProps) {
   );
 
   return (
-    <div className="chart-container">
+    <div className="chart-container chart-desktop-view">
       {/* Chart Header */}
       <div className="chart-header-bar rounded-t-lg">
         {/* Breadcrumb */}
@@ -227,14 +236,22 @@ export function TorbayChart({ data, onTreatmentClick }: TorbayChartProps) {
         {/* Title and Actions */}
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" asChild>
+            <Button variant="default" size="sm" asChild>
               <Link to={`/charts/${data.slug}`}>
-                📊 Chart
+                <BarChart3 className="h-4 w-4 mr-1" />
+                Chart
+              </Link>
+            </Button>
+            <Button variant="secondary" size="sm" asChild>
+              <Link to={`/charts/${data.slug}/table`}>
+                <Table2 className="h-4 w-4 mr-1" />
+                Table
               </Link>
             </Button>
             <Button variant="secondary" size="sm" asChild>
               <Link to={`/charts/${data.slug}/treatments`}>
-                💊 All Treatments
+                <Pill className="h-4 w-4 mr-1" />
+                All Treatments
               </Link>
             </Button>
           </div>
