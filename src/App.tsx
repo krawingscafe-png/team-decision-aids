@@ -92,6 +92,14 @@ const App = () => {
                       <main className="flex-1">
                         <Routes>
                           <Route path="/" element={<Home />} />
+                          <Route
+                            path="/dashboard"
+                            element={
+                              <Protected>
+                                <Dashboard />
+                              </Protected>
+                            }
+                          />
                           <Route path="/features" element={<Features />} />
                           <Route path="/pricing" element={<Pricing />} />
                           <Route path="/login" element={<Login />} />
