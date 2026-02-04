@@ -22,12 +22,9 @@ export function PricingCard({ plan }: PricingCardProps) {
   const { initiateCheckout, isLoading } = useStripeCheckout();
 
   const handleChoose = () => {
-    if (plan.priceId === 'price_free') {
-      // For free plan, redirect directly to login
-      window.location.href = '/login?plan=free';
-      return;
-    }
-    initiateCheckout(plan.priceId);
+    // Redirect to signup with plan info
+    const planName = plan.name.toLowerCase();
+    window.location.href = `/signup?plan=${planName}`;
   };
 
   return (

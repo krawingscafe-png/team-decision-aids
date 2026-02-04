@@ -18,6 +18,8 @@ import Home from "./pages/Home";
 import Features from "./pages/Features";
 import Pricing from "./pages/Pricing";
 import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import VerifyEmail from "./pages/VerifyEmail";
 import Charts from "./pages/Charts";
 import ChartDetail from "./pages/ChartDetail";
 import TreatmentDetail from "./pages/TreatmentDetail";
@@ -84,6 +86,8 @@ const App = () => {
                           <Route path="/features" element={<Features />} />
                           <Route path="/pricing" element={<Pricing />} />
                           <Route path="/login" element={<Login />} />
+                          <Route path="/signup" element={<Signup />} />
+                          <Route path="/verify-email" element={<VerifyEmail />} />
                           <Route
                             path="/charts"
                             element={
