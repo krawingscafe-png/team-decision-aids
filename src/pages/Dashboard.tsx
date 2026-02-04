@@ -207,7 +207,7 @@ export default function Dashboard() {
       </div>
 
       {/* Upgrade Banner (for non-pro users) */}
-      {subscription?.plan !== 'enterprise' && (
+      {user?.plan !== 'enterprise' && (
         <Card className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border-primary/20">
           <CardContent className="flex flex-col md:flex-row items-center justify-between gap-4 py-6">
             <div className="flex items-center gap-4">
