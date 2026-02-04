@@ -181,8 +181,16 @@ export default function AdminAuditLogs() {
     return matchesSearch && matchesCategory && matchesSeverity;
   });
 
-  const { paginatedData, currentPage, totalPages, setCurrentPage, pageSize, setPageSize } = 
-    usePagination(filteredLogs, 10);
+  const { 
+    paginatedData, 
+    currentPage, 
+    totalPages, 
+    goToPage, 
+    itemsPerPage, 
+    setItemsPerPage,
+    startIndex,
+    endIndex
+  } = usePagination<AuditLog>({ data: filteredLogs, itemsPerPage: 10 });
 
   return (
     <div className="p-6 space-y-6">
