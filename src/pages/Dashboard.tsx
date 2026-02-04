@@ -40,7 +40,7 @@ const usageStats = {
 };
 
 export default function Dashboard() {
-  const { user, subscription } = useAuth();
+  const { user } = useAuth();
 
   const getUsagePercentage = (used: number, limit: number) => (used / limit) * 100;
 
