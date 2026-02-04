@@ -58,9 +58,9 @@ export default function Dashboard() {
         </div>
         <div className="flex items-center gap-2">
           <Badge variant="outline" className="capitalize">
-            {subscription?.plan || 'Free'} Plan
+            {user?.plan || 'Free'} Plan
           </Badge>
-          {subscription?.plan === 'pro' && (
+          {user?.plan === 'pro' && (
             <Badge className="bg-gradient-to-r from-primary to-primary/80">
               <Zap className="h-3 w-3 mr-1" />
               Pro Member
