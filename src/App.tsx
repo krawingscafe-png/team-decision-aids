@@ -78,6 +78,9 @@ const App = () => {
                   <Route path="payments" element={<AdminPayments />} />
                   <Route path="tenants" element={<AdminTenants />} />
                   <Route path="analytics" element={<AdminAnalytics />} />
+                  <Route path="usage" element={<AdminUsage />} />
+                  <Route path="reports" element={<AdminReports />} />
+                  <Route path="audit-logs" element={<AdminAuditLogs />} />
                 </Route>
 
                 {/* Main App Routes */}
