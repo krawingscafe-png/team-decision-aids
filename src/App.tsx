@@ -38,6 +38,12 @@ import AdminUsers from "./pages/admin/AdminUsers";
 import AdminPayments from "./pages/admin/AdminPayments";
 import AdminTenants from "./pages/admin/AdminTenants";
 import AdminAnalytics from "./pages/admin/AdminAnalytics";
+import AdminUsage from "./pages/admin/AdminUsage";
+import AdminReports from "./pages/admin/AdminReports";
+import AdminAuditLogs from "./pages/admin/AdminAuditLogs";
+
+// User Pages
+import Dashboard from "./pages/Dashboard";
 
 const queryClient = new QueryClient();
 
@@ -72,6 +78,9 @@ const App = () => {
                   <Route path="payments" element={<AdminPayments />} />
                   <Route path="tenants" element={<AdminTenants />} />
                   <Route path="analytics" element={<AdminAnalytics />} />
+                  <Route path="usage" element={<AdminUsage />} />
+                  <Route path="reports" element={<AdminReports />} />
+                  <Route path="audit-logs" element={<AdminAuditLogs />} />
                 </Route>
 
                 {/* Main App Routes */}
@@ -83,6 +92,14 @@ const App = () => {
                       <main className="flex-1">
                         <Routes>
                           <Route path="/" element={<Home />} />
+                          <Route
+                            path="/dashboard"
+                            element={
+                              <Protected>
+                                <Dashboard />
+                              </Protected>
+                            }
+                          />
                           <Route path="/features" element={<Features />} />
                           <Route path="/pricing" element={<Pricing />} />
                           <Route path="/login" element={<Login />} />

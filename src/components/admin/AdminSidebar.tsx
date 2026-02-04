@@ -8,7 +8,10 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
-  Shield
+  Shield,
+  Gauge,
+  FileText,
+  ClipboardList
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
@@ -23,6 +26,9 @@ const navItems = [
   { path: '/admin/payments', label: 'Payments', icon: CreditCard },
   { path: '/admin/tenants', label: 'Tenants', icon: Building2 },
   { path: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
+  { path: '/admin/usage', label: 'Usage & Quotas', icon: Gauge },
+  { path: '/admin/reports', label: 'Reports', icon: FileText },
+  { path: '/admin/audit-logs', label: 'Audit Logs', icon: ClipboardList },
 ];
 
 export function AdminSidebar() {

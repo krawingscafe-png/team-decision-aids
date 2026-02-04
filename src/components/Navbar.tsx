@@ -21,6 +21,7 @@ export function Navbar({ tenantLogo }: NavbarProps) {
     { path: '/', label: 'Home' },
     { path: '/features', label: 'Features' },
     { path: '/pricing', label: 'Pricing' },
+    ...(user ? [{ path: '/dashboard', label: 'Dashboard' }] : []),
   ];
 
   return (
