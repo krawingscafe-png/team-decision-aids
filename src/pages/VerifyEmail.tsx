@@ -175,7 +175,7 @@ export default function VerifyEmail() {
         {/* Demo Notice */}
         <div className="mt-6 p-4 border rounded-lg bg-muted/30">
           <p className="text-xs text-center text-muted-foreground">
-            🧪 <strong>Demo Mode:</strong> Email will auto-verify in 5 seconds for testing purposes.
+            🧪 <span className="font-semibold">Demo Mode:</span> Email will auto-verify in 5 seconds for testing purposes.
           </p>
         </div>
       </div>
