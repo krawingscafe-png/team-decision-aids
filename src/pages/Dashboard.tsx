@@ -217,7 +217,7 @@ export default function Dashboard() {
               <div>
                 <h3 className="font-semibold">Unlock More Features</h3>
                 <p className="text-sm text-muted-foreground">
-                  Upgrade to {subscription?.plan === 'pro' ? 'Enterprise' : 'Pro'} for unlimited access and priority support
+                  Upgrade to {user?.plan === 'pro' ? 'Enterprise' : 'Pro'} for unlimited access and priority support
                 </p>
               </div>
             </div>

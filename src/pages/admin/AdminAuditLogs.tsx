@@ -335,10 +335,12 @@ export default function AdminAuditLogs() {
           <DataTablePagination
             currentPage={currentPage}
             totalPages={totalPages}
-            onPageChange={setCurrentPage}
-            pageSize={pageSize}
-            onPageSizeChange={setPageSize}
+            startIndex={startIndex}
+            endIndex={endIndex}
             totalItems={filteredLogs.length}
+            itemsPerPage={itemsPerPage}
+            onPageChange={goToPage}
+            onItemsPerPageChange={setItemsPerPage}
           />
         </CardContent>
       </Card>
