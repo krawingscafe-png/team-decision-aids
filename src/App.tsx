@@ -38,6 +38,12 @@ import AdminUsers from "./pages/admin/AdminUsers";
 import AdminPayments from "./pages/admin/AdminPayments";
 import AdminTenants from "./pages/admin/AdminTenants";
 import AdminAnalytics from "./pages/admin/AdminAnalytics";
+import AdminUsage from "./pages/admin/AdminUsage";
+import AdminReports from "./pages/admin/AdminReports";
+import AdminAuditLogs from "./pages/admin/AdminAuditLogs";
+
+// User Pages
+import Dashboard from "./pages/Dashboard";
 
 const queryClient = new QueryClient();
 
