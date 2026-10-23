@@ -42,9 +42,9 @@ export default function Home() {
       <section className="relative overflow-hidden bg-gradient-to-br from-primary/5 via-background to-accent/5 py-20 lg:py-32">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+            <h1 className="text-display-1 font-bold tracking-tight text-foreground sm:text-display-2 lg:text-display-3">
               Shared Decision-Making
-              <span className="block text-primary">for NHS Teams & Patients</span>
+              <span className="block text-primary">for NHS Teams &amp; Patients</span>
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
               Interactive decision aid tools that empower patients and clinicians to make 

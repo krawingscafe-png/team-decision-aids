@@ -2,93 +2,140 @@
 @tailwind components;
 @tailwind utilities;
 
-/* NHS-themed Design System with Multi-tenant CSS Variables */
+/*
+  WordCraft Design System — token-driven, dark-first.
+  Foundations: Inter, 16px/24px base, 4/6/8/10/12/16/20/24 spacing,
+  motion 120/150/200ms, WCAG 2.2 AA contrast.
+  Tenant CSS variables (--tenant-primary, --tenant-font) may override per trust.
+*/
 
 @layer base {
   :root {
-    /* NHS Blue as primary - can be overridden per tenant */
-    --primary: 211 63% 40%;
-    --primary-foreground: 0 0% 100%;
+    /* Primary — color.text.inverse #8da2fb */
+    --primary: 229 93% 77%;
+    --primary-foreground: 240 9% 5%; /* color.text.tertiary #0b0b0c */
 
-    --background: 210 20% 98%;
-    --foreground: 215 25% 15%;
+    /* Surfaces — surface.base #000000, muted #121316, strong #060607 */
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%; /* color.text.secondary #ffffff */
 
-    --card: 0 0% 100%;
-    --card-foreground: 215 25% 15%;
+    --card: 225 10% 8%; /* #121316 */
+    --card-foreground: 0 0% 100%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 215 25% 15%;
+    --popover: 225 10% 8%;
+    --popover-foreground: 0 0% 100%;
 
-    --secondary: 210 20% 96%;
-    --secondary-foreground: 215 25% 15%;
+    --secondary: 225 8% 12%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 15% 93%;
-    --muted-foreground: 215 15% 45%;
+    --muted: 225 8% 12%;
+    --muted-foreground: 240 5% 65%;
 
-    --accent: 168 76% 36%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 229 93% 77%;
+    --accent-foreground: 240 9% 5%;
 
-    --destructive: 0 72% 51%;
+    --destructive: 0 72% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 214 20% 88%;
-    --input: 214 20% 88%;
-    --ring: 211 63% 40%;
+    --border: 225 8% 18%;
+    --input: 225 8% 18%;
+    --ring: 229 93% 77%;
 
     --radius: 0.5rem;
 
     /* Tenant-specific variables (overridden via API) */
-    --tenant-primary: 211 63% 40%;
+    --tenant-primary: 229 93% 77%;
     --tenant-font: 'Inter', system-ui, sans-serif;
 
-    /* Sidebar */
+    /* Sidebar — surface.strong #060607 */
+    --sidebar-background: 225 10% 3%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 229 93% 77%;
+    --sidebar-primary-foreground: 240 9% 5%;
+    --sidebar-accent: 225 8% 12%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 225 8% 18%;
+    --sidebar-ring: 229 93% 77%;
+  }
+
+  /* Light mode — border.default #f2f1ee, text on light #0b0b0c */
+  .light {
+    --primary: 228 83% 58%;
+    --primary-foreground: 0 0% 100%;
+
+    --background: 45 13% 94%; /* #f2f1ee */
+    --foreground: 240 9% 5%; /* #0b0b0c */
+
+    --card: 0 0% 100%;
+    --card-foreground: 240 9% 5%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 9% 5%;
+
+    --secondary: 0 0% 97%;
+    --secondary-foreground: 240 9% 5%;
+
+    --muted: 45 13% 90%;
+    --muted-foreground: 240 4% 35%;
+
+    --accent: 228 83% 58%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 45%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 45 13% 84%;
+    --input: 45 13% 84%;
+    --ring: 228 83% 58%;
+
     --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 211 63% 40%;
+    --sidebar-foreground: 240 5% 26%;
+    --sidebar-primary: 228 83% 58%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 20% 96%;
-    --sidebar-accent-foreground: 215 25% 15%;
-    --sidebar-border: 214 20% 88%;
-    --sidebar-ring: 211 63% 40%;
+    --sidebar-accent: 45 13% 90%;
+    --sidebar-accent-foreground: 240 9% 5%;
+    --sidebar-border: 45 13% 84%;
+    --sidebar-ring: 228 83% 58%;
   }
 
   .dark {
-    --background: 215 25% 10%;
-    --foreground: 210 20% 98%;
+    /* Same dark-first WordCraft palette */
+    --primary: 229 93% 77%;
+    --primary-foreground: 240 9% 5%;
 
-    --card: 215 25% 12%;
-    --card-foreground: 210 20% 98%;
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
 
-    --popover: 215 25% 12%;
-    --popover-foreground: 210 20% 98%;
+    --card: 225 10% 8%;
+    --card-foreground: 0 0% 100%;
 
-    --primary: 211 63% 50%;
-    --primary-foreground: 0 0% 100%;
+    --popover: 225 10% 8%;
+    --popover-foreground: 0 0% 100%;
 
-    --secondary: 215 20% 18%;
-    --secondary-foreground: 210 20% 98%;
+    --secondary: 225 8% 12%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 215 20% 18%;
-    --muted-foreground: 215 15% 60%;
+    --muted: 225 8% 12%;
+    --muted-foreground: 240 5% 65%;
 
-    --accent: 168 76% 42%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 229 93% 77%;
+    --accent-foreground: 240 9% 5%;
 
-    --destructive: 0 62% 40%;
+    --destructive: 0 72% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 215 20% 22%;
-    --input: 215 20% 22%;
-    --ring: 211 63% 50%;
+    --border: 225 8% 18%;
+    --input: 225 8% 18%;
+    --ring: 229 93% 77%;
 
-    --sidebar-background: 215 25% 10%;
-    --sidebar-foreground: 210 20% 90%;
-    --sidebar-primary: 211 63% 50%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 215 20% 18%;
-    --sidebar-accent-foreground: 210 20% 98%;
-    --sidebar-border: 215 20% 22%;
-    --sidebar-ring: 211 63% 50%;
+    --sidebar-background: 225 10% 3%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 229 93% 77%;
+    --sidebar-primary-foreground: 240 9% 5%;
+    --sidebar-accent: 225 8% 12%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 225 8% 18%;
+    --sidebar-ring: 229 93% 77%;
   }
 }
 
@@ -100,6 +147,14 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--tenant-font);
+    font-size: 16px;
+    line-height: 24px;
+  }
+
+  /* Keyboard-first: always-visible focus indicator */
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
   }
 
   /* Apply tenant primary color dynamically */
@@ -108,7 +163,7 @@
   }
 }
 
-/* Utility animations */
+/* Utility animations (motion.duration: instant 120ms / fast 150ms / normal 200ms) */
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
   10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
@@ -116,7 +171,7 @@
 }
 
 .animate-shake {
-  animation: shake 0.5s ease-in-out;
+  animation: shake 0.2s ease-in-out;
 }
 
 @keyframes fade-in {
@@ -125,5 +180,5 @@
 }
 
 .animate-fade-in {
-  animation: fade-in 0.3s ease-out;
+  animation: fade-in 0.2s ease-out;
 }
