@@ -13,6 +13,20 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ["'Inter'", "system-ui", "sans-serif"],
+      },
+      fontSize: {
+        "display-1": ["24px", { lineHeight: "32px", letterSpacing: "-0.01em" }],
+        "display-2": ["36px", { lineHeight: "40px", letterSpacing: "-0.02em" }],
+        "display-3": ["60px", { lineHeight: "64px", letterSpacing: "-0.02em" }],
+        "display-4": ["72px", { lineHeight: "76px", letterSpacing: "-0.03em" }],
+      },
+      transitionDuration: {
+        instant: "120ms",
+        fast: "150ms",
+        normal: "200ms",
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

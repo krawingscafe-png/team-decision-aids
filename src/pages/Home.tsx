@@ -42,9 +42,9 @@ export default function Home() {
       <section className="relative overflow-hidden bg-gradient-to-br from-primary/5 via-background to-accent/5 py-20 lg:py-32">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+            <h1 className="text-display-1 font-bold tracking-tight text-foreground sm:text-display-2 lg:text-display-3">
               Shared Decision-Making
-              <span className="block text-primary">for NHS Teams & Patients</span>
+              <span className="block text-primary">for NHS Teams &amp; Patients</span>
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
               Interactive decision aid tools that empower patients and clinicians to make 
@@ -75,7 +75,7 @@ export default function Home() {
       <section className="py-20 bg-background">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-foreground">Why Choose Torbay Charts?</h2>
+            <h2 className="text-display-2 font-bold text-foreground">Why Choose Torbay Charts?</h2>
             <p className="mt-4 text-muted-foreground">
               Purpose-built tools for NHS shared decision-making
             </p>
@@ -102,7 +102,7 @@ export default function Home() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
             <div>
-              <h2 className="text-3xl font-bold text-foreground">
+              <h2 className="text-display-2 font-bold text-foreground">
                 Everything Your NHS Trust Needs
               </h2>
               <p className="mt-4 text-muted-foreground">
@@ -144,7 +144,7 @@ export default function Home() {
       {/* CTA Section */}
       <section className="py-20 bg-primary text-primary-foreground">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold">Ready to Transform Patient Care?</h2>
+          <h2 className="text-display-2 font-bold">Ready to Transform Patient Care?</h2>
           <p className="mt-4 text-primary-foreground/80 max-w-2xl mx-auto">
             Join NHS trusts across the country using Torbay Charts for better 
             patient outcomes through shared decision-making.
